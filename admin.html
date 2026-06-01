@@ -2,9 +2,72 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin MusicNewsID</title>
+
 <link rel="stylesheet" href="style.css">
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f4f4;
+  margin:0;
+}
+
+header{
+  background:#111;
+  color:white;
+  padding:15px;
+  text-align:center;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+  padding:15px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+input, textarea{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  margin-bottom:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font-size:14px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#111;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button:hover{
+  background:#333;
+}
+
+.status{
+  margin-top:10px;
+  font-size:14px;
+}
+</style>
+
 </head>
+
 <body>
 
 <header>
@@ -12,15 +75,85 @@
 </header>
 
 <div class="container">
-  <div class="card">
-    <h2>Tambah Berita (Demo)</h2>
 
-    <input placeholder="Judul Berita">
-    <textarea placeholder="Isi berita..."></textarea>
-    <button onclick="alert('Fitur CMS bisa dikembangkan ke Firebase / backend')">Publish</button>
+  <div class="card">
+
+    <h2>Tambah Berita</h2>
+
+    <input id="judul" type="text" placeholder="Judul Berita">
+
+    <textarea id="isi" placeholder="Isi berita..."></textarea>
+
+    <button onclick="publishNews()">Publish</button>
+
+    <div class="status" id="status"></div>
 
   </div>
+
 </div>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
+  authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
+  projectId: "ai-studio-applet-webapp-fbf67",
+  storageBucket: "ai-studio-applet-webapp-fbf67.firebasestorage.app",
+  messagingSenderId: "831721646868",
+  appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const status = document.getElementById("status");
+
+window.publishNews = async function(){
+
+  const title = document.getElementById("judul").value.trim();
+  const content = document.getElementById("isi").value.trim();
+
+  if(!title || !content){
+    status.innerHTML = "❌ Judul dan isi wajib diisi";
+    return;
+  }
+
+  try{
+
+    status.innerHTML = "⏳ Menyimpan berita...";
+
+    await addDoc(collection(db, "musicnews_articles"), {
+      title: title,
+      content: content,
+      author: "MusicNewsID",
+      createdAt: serverTimestamp()
+    });
+
+    status.innerHTML = "✅ Berita berhasil dipublikasikan!";
+
+    document.getElementById("judul").value = "";
+    document.getElementById("isi").value = "";
+
+  }catch(error){
+
+    console.error(error);
+    status.innerHTML = "❌ Gagal publish (cek Firestore Rules)";
+
+  }
+
+};
+
+</script>
 
 </body>
 </html>
