@@ -11,7 +11,8 @@ header{background:#111;color:#fff;padding:15px;text-align:center}
 .container{max-width:800px;margin:auto;padding:15px}
 .card{background:#fff;padding:20px;border-radius:10px}
 input,textarea{width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;border-radius:6px}
-button{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:6px}
+button{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:6px;cursor:pointer}
+button:hover{background:#333}
 .status{margin-top:10px;font-size:14px}
 </style>
 
@@ -19,7 +20,7 @@ button{width:100%;padding:12px;background:#111;color:#fff;border:none;border-rad
 <body>
 
 <header>
-<h1>Admin MusicNewsID (Local Mode)</h1>
+<h1>Admin MusicNewsID (Firebase Mode)</h1>
 </header>
 
 <div class="container">
@@ -37,33 +38,57 @@ button{width:100%;padding:12px;background:#111;color:#fff;border:none;border-rad
 </div>
 </div>
 
-<script>
-function publish(){
+<script type="module">
 
-  const title = document.getElementById("judul").value;
-  const content = document.getElementById("isi").value;
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
+  authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
+  projectId: "ai-studio-applet-webapp-fbf67",
+  storageBucket: "ai-studio-applet-webapp-fbf67.appspot.com",
+  messagingSenderId: "831721646868",
+  appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const status = document.getElementById("status");
+
+window.publish = async function(){
+
+  const title = document.getElementById("judul").value.trim();
+  const content = document.getElementById("isi").value.trim();
 
   if(!title || !content){
-    document.getElementById("status").innerText = "❌ Isi lengkap dulu";
+    status.innerText = "❌ Isi lengkap dulu";
     return;
   }
 
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
+  try {
+    status.innerText = "⏳ Menyimpan ke Firebase...";
 
-  data.unshift({
-    title: title,
-    content: content,
-    date: new Date().toLocaleString()
-  });
+    await addDoc(collection(db, "musicnews_articles"), {
+      title: title,
+      content: content,
+      date: serverTimestamp()
+    });
 
-  localStorage.setItem("news", JSON.stringify(data));
+    status.innerText = "✅ Berhasil masuk Firebase!";
 
-  document.getElementById("status").innerText = "✅ Berhasil disimpan (local)";
+    document.getElementById("judul").value = "";
+    document.getElementById("isi").value = "";
 
-  document.getElementById("judul").value = "";
-  document.getElementById("isi").value = "";
+  } catch (e) {
+    console.error(e);
+    status.innerText = "❌ Gagal (cek Firebase Rules / Config)";
+  }
 
-}
+};
+
 </script>
 
 </body>
