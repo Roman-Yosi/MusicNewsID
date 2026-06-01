@@ -2,14 +2,53 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>MusicNewsID - Portal Musik Indonesia</title>
+
 <meta name="description" content="Portal berita musik Indonesia: berita, review, chart, dan artis terbaru">
+
+<!-- Open Graph (biar kalau dishare di WhatsApp / Facebook bagus) -->
+<meta property="og:title" content="MusicNewsID - Portal Musik Indonesia">
+<meta property="og:description" content="Berita musik terbaru: indie, pop, cinematic, chart musik Indonesia">
+<meta property="og:type" content="website">
+
 <link rel="stylesheet" href="style.css">
+
+<style>
+/* tambahan kecil tanpa ganggu style.css */
+.search-box{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+}
+
+.search-box input{
+  width:60%;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.featured{
+  background:#111;
+  color:#fff;
+  padding:15px;
+  margin:10px 0;
+}
+
+.featured h2{
+  margin:0;
+}
+</style>
+
 </head>
+
 <body>
 
 <header>
   <h1>MusicNewsID</h1>
+
   <nav>
     <a href="index.html">Home</a>
     <a href="berita.html">Berita</a>
@@ -18,11 +57,27 @@
   </nav>
 </header>
 
-<div class="breaking">🔥 BREAKING: Industri musik Indonesia didominasi genre indie & cinematic pop</div>
+<!-- SEARCH BAR -->
+<div class="search-box">
+  <input type="text" placeholder="Cari berita musik...">
+</div>
+
+<!-- BREAKING -->
+<div class="breaking">
+  🔥 BREAKING: Industri musik Indonesia didominasi genre indie & cinematic pop
+</div>
+
+<!-- FEATURED NEWS -->
+<div class="featured">
+  <h2>⭐ Featured Story</h2>
+  <p>Roman Yosi rilis karya cinematic pop terbaru dengan nuansa emosional dan storytelling kuat.</p>
+</div>
 
 <div class="container">
 
+  <!-- MAIN NEWS -->
   <div>
+
     <div class="card">
       <span class="badge">HOT</span>
       <h2><a href="detail.html">Roman Yosi Rilis Single Cinematic Baru</a></h2>
@@ -33,14 +88,23 @@
       <h2>Spotify Chart Indonesia Bergerak Cepat</h2>
       <p>Perubahan tren musik streaming semakin dinamis setiap minggu.</p>
     </div>
+
+    <div class="card">
+      <h2>Indie Pop Jadi Genre Paling Viral 2026</h2>
+      <p>Musik indie mendominasi platform streaming digital Indonesia.</p>
+    </div>
+
   </div>
 
+  <!-- SIDEBAR -->
   <div>
+
     <div class="card">
       <h3>Trending Artist</h3>
       <p>• Roman Yosi</p>
       <p>• Tulus</p>
       <p>• Nadin Amizah</p>
+      <p>• Pamungkas</p>
     </div>
 
     <div class="card">
@@ -49,11 +113,15 @@
       <p>Acoustic Viral</p>
       <p>Cinematic Sound</p>
     </div>
+
   </div>
 
 </div>
 
-<footer>© 2026 MusicNewsID PRO</footer>
+<!-- FOOTER -->
+<footer>
+  © 2026 MusicNewsID PRO
+</footer>
 
 </body>
 </html>
