@@ -33,6 +33,12 @@ header{
   box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
+.card img{
+  width:100%;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
 .title{
   font-size:18px;
   font-weight:bold;
@@ -91,7 +97,7 @@ const db = firebase.firestore();
 
 const container = document.getElementById("newsContainer");
 
-// ===== REALTIME LOAD (RECOMMENDED) =====
+// ===== REALTIME LISTENER =====
 db.collection("musicnews_articles")
 .onSnapshot((snapshot) => {
 
@@ -106,14 +112,25 @@ db.collection("musicnews_articles")
 
     const data = doc.data();
 
+    const title = data.title || "Tanpa judul";
+    const content = data.content || "";
+    const image = data.image || "";
+
+    // aman untuk timestamp Firestore
+    let date = "";
+    if(data.createdAt){
+      if(typeof data.createdAt === "object" && data.createdAt.toDate){
+        date = data.createdAt.toDate().toLocaleString();
+      } else {
+        date = data.createdAt;
+      }
+    }
+
     const card = document.createElement("div");
     card.className = "card";
 
-    const title = data.title || "Tanpa judul";
-    const content = data.content || "";
-    const date = data.createdAt || "";
-
     card.innerHTML = `
+      ${image ? `<img src="${image}">` : ""}
       <div class="title">${title}</div>
       <div class="date">${date}</div>
       <div class="content">${content}</div>
