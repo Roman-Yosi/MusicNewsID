@@ -8,41 +8,56 @@
 <style>
 body{font-family:Arial;background:#f4f4f4;margin:0}
 header{background:#111;color:#fff;padding:15px;text-align:center}
-.container{max-width:800px;margin:auto;padding:15px}
+.container{max-width:600px;margin:auto;padding:15px}
 .card{background:#fff;padding:20px;border-radius:10px}
-input,textarea{width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;border-radius:6px}
-button{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:6px}
-button:hover{background:#333}
+input,textarea{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:#111;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+}
 .status{margin-top:10px;font-size:14px}
 </style>
-
 </head>
+
 <body>
 
 <header>
-<h1>Admin MusicNewsID (COMPAT FIREBASE)</h1>
+<h1>Admin MusicNewsID</h1>
 </header>
 
 <div class="container">
-<div class="card">
+  <div class="card">
 
-<h2>Tambah Berita</h2>
+    <h2>Tambah Berita</h2>
 
-<input id="judul" placeholder="Judul berita">
-<textarea id="isi" placeholder="Isi berita..."></textarea>
+    <input id="judul" placeholder="Judul berita">
+    <textarea id="isi" placeholder="Isi berita..."></textarea>
 
-<button onclick="publish()">Publish</button>
+    <button onclick="publish()">Publish</button>
 
-<div class="status" id="status"></div>
+    <div class="status" id="status"></div>
 
+  </div>
 </div>
-</div>
 
-<!-- FIREBASE COMPAT (STABIL UNTUK HP) -->
+<!-- FIREBASE COMPAT (WAJIB INI) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 
 <script>
+// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
   authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
@@ -52,6 +67,7 @@ const firebaseConfig = {
   appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
 };
 
+// INIT FIREBASE
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
@@ -62,7 +78,7 @@ function publish(){
   const status = document.getElementById("status");
 
   if(!title || !content){
-    status.innerText = "❌ Isi lengkap dulu";
+    status.innerText = "❌ Isi judul dan berita dulu";
     return;
   }
 
@@ -71,10 +87,10 @@ function publish(){
   db.collection("musicnews_articles").add({
     title: title,
     content: content,
-    date: new Date()
+    createdAt: new Date().toISOString()
   })
-  .then(() => {
-    status.innerText = "✅ Berhasil masuk Firebase!";
+  .then((docRef) => {
+    status.innerText = "✅ BERHASIL! ID: " + docRef.id;
     document.getElementById("judul").value = "";
     document.getElementById("isi").value = "";
   })
@@ -84,7 +100,6 @@ function publish(){
   });
 
 }
-
 </script>
 
 </body>
