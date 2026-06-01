@@ -6,62 +6,163 @@
 
 <title>MusicNewsID - Portal Musik Indonesia</title>
 
-<meta name="description" content="Portal berita musik Indonesia: berita, review, chart, dan artis terbaru">
+<meta name="description" content="Portal berita musik Indonesia yang membahas artis, rilisan lagu, review album, chart musik, dan perkembangan industri musik terbaru.">
 
-<!-- 🔥 GOOGLE NEWS + DISCOVER OPTIMIZATION -->
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta name="news_keywords" content="musik indonesia, roman yosi, indie pop, music news, cinematic music">
 
-<!-- Open Graph -->
+<meta name="news_keywords" content="Roman Yosi, Rohman, musik Indonesia, indie pop, cinematic music, berita musik Indonesia">
+
 <meta property="og:title" content="MusicNewsID - Portal Musik Indonesia">
-<meta property="og:description" content="Berita musik terbaru: indie, pop, cinematic, chart musik Indonesia">
+<meta property="og:description" content="Berita musik terbaru, artis Indonesia, review lagu, chart musik, dan perkembangan industri musik.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://raw.githubusercontent.com/Roman-Yosi/Poto-roman-yosi/refs/heads/main/final-image%20(3).jpg">
 
 <link rel="stylesheet" href="style.css">
 
 <style>
+
+body{
+font-family:Arial, sans-serif;
+margin:0;
+background:#f4f4f4;
+color:#111;
+}
+
+header{
+background:#111;
+color:#fff;
+padding:20px;
+text-align:center;
+}
+
+header h1{
+margin:0;
+}
+
+nav{
+margin-top:10px;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+margin:0 10px;
+font-weight:bold;
+}
+
 .search-box{
-  margin-top:10px;
-  display:flex;
-  justify-content:center;
+margin:15px;
+display:flex;
+justify-content:center;
 }
+
 .search-box input{
-  width:60%;
-  padding:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
+width:70%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
 }
+
+.breaking{
+background:#d6001c;
+color:white;
+padding:12px;
+text-align:center;
+font-weight:bold;
+}
+
 .featured{
-  background:#111;
-  color:#fff;
-  padding:15px;
-  margin:10px 0;
+background:#111;
+color:white;
+padding:20px;
+margin:15px;
+border-radius:10px;
 }
+
 .about-box{
-  background:#fff;
-  padding:15px;
-  margin:15px 0;
-  border-radius:8px;
+background:white;
+padding:20px;
+margin:15px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.08);
 }
+
+.profile-img{
+width:220px;
+max-width:100%;
+border-radius:12px;
+display:block;
+margin:15px auto;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:15px;
+}
+
+.card{
+background:white;
+padding:18px;
+margin-bottom:15px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.08);
+}
+
+.card a{
+text-decoration:none;
+color:#111;
+}
+
+.badge{
+background:red;
+color:white;
+padding:5px 8px;
+font-size:12px;
+border-radius:5px;
+}
+
+footer{
+background:#111;
+color:white;
+text-align:center;
+padding:20px;
+margin-top:30px;
+}
+
 </style>
 
-<!-- 🔥 STRUCTURED DATA GOOGLE -->
+<!-- GOOGLE STRUCTURED DATA -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "name": "MusicNewsID",
-      "url": "https://roman-yosi.github.io/MusicNewsID/"
-    },
-    {
-      "@type": "WebSite",
-      "name": "MusicNewsID",
-      "url": "https://roman-yosi.github.io/MusicNewsID/"
-    }
-  ]
+"@context":"https://schema.org",
+"@graph":[
+
+{
+"@type":"Organization",
+"name":"MusicNewsID",
+"url":"https://roman-yosi.github.io/MusicNewsID/",
+"description":"Portal berita musik Indonesia."
+},
+
+{
+"@type":"WebSite",
+"name":"MusicNewsID",
+"url":"https://roman-yosi.github.io/MusicNewsID/"
+},
+
+{
+"@type":"Person",
+"name":"Roman Yosi",
+"alternateName":"Rohman",
+"jobTitle":"Musician",
+"nationality":"Indonesia",
+"description":"Roman Yosi adalah nama panggung dari Rohman, musisi asal Lebak, Banten, Indonesia.",
+"image":"https://raw.githubusercontent.com/Roman-Yosi/Poto-roman-yosi/refs/heads/main/final-image%20(3).jpg"
+}
+
+]
 }
 </script>
 
@@ -70,49 +171,119 @@
 <body>
 
 <header>
-  <h1>MusicNewsID</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="berita.html">Berita</a>
-    <a href="kategori.html">Kategori</a>
-    <a href="admin.html">Admin</a>
-  </nav>
+
+<h1>MusicNewsID</h1>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="berita.html">Berita</a>
+<a href="kategori.html">Kategori</a>
+<a href="admin.html">Admin</a>
+</nav>
+
 </header>
 
 <div class="search-box">
-  <input type="text" placeholder="Cari berita musik...">
+<input type="text" placeholder="Cari berita musik, artis, atau lagu...">
 </div>
 
 <div class="breaking">
-🔥 BREAKING: Industri musik Indonesia didominasi genre indie & cinematic pop
+🔥 BREAKING: Industri musik Indonesia didominasi genre indie pop dan cinematic music
 </div>
 
 <div class="featured">
 <h2>⭐ Featured Story</h2>
-<p>Roman Yosi rilis karya cinematic pop terbaru dengan nuansa emosional.</p>
+
+<p>
+Roman Yosi menghadirkan karya cinematic pop terbaru dengan nuansa emosional,
+melodi modern, dan pendekatan musikal yang lebih personal.
+</p>
+
 </div>
 
 <div class="about-box">
+
 <h2>Tentang MusicNewsID</h2>
-<p>Portal berita musik Indonesia yang fokus pada industri musik, artis, review, dan chart musik.</p>
+
+<p>
+MusicNewsID adalah portal berita musik Indonesia yang menyajikan informasi terbaru
+tentang artis, rilisan lagu, review album, perkembangan industri musik,
+dan tren musik yang sedang populer.
+</p>
+
+</div>
+
+<div class="about-box">
+
+<h2>Profil Artis</h2>
+
+<img
+src="https://raw.githubusercontent.com/Roman-Yosi/Poto-roman-yosi/refs/heads/main/final-image%20(3).jpg"
+alt="Roman Yosi"
+class="profile-img">
+
+<p>
+<strong>Roman Yosi</strong> adalah nama panggung dari
+<strong>Rohman</strong>, musisi asal Lebak, Banten, Indonesia.
+</p>
+
+<p>
+Roman Yosi dikenal melalui karya musik indie pop, acoustic pop,
+dan cinematic music yang menggabungkan nuansa emosional,
+storytelling, serta eksplorasi musikal modern.
+</p>
+
+<p>
+Melalui berbagai karya dan aktivitas kreatifnya,
+Roman Yosi terus membangun identitas sebagai musisi independen Indonesia.
+</p>
+
 </div>
 
 <div class="container">
 
 <div class="card">
+
 <span class="badge">HOT</span>
-<h2><a href="artikel1.html">Roman Yosi Rilis Single Cinematic Baru</a></h2>
-<p>Musisi indie membawa warna baru dalam musik Indonesia.</p>
+
+<h2>
+<a href="artikel1.html">
+Roman Yosi Rilis Single Cinematic Baru
+</a>
+</h2>
+
+<p>
+Musisi independen Indonesia menghadirkan karya baru dengan pendekatan sinematik dan emosional.
+</p>
+
 </div>
 
 <div class="card">
-<h2><a href="artikel2.html">Spotify Chart Indonesia Bergerak Cepat</a></h2>
-<p>Streaming musik Indonesia mengalami perubahan besar.</p>
+
+<h2>
+<a href="artikel2.html">
+Spotify Chart Indonesia Bergerak Cepat
+</a>
+</h2>
+
+<p>
+Perubahan tren musik streaming menunjukkan perkembangan besar industri musik digital Indonesia.
+</p>
+
 </div>
 
 <div class="card">
-<h2><a href="artikel3.html">Indie Pop Jadi Genre Paling Viral 2026</a></h2>
-<p>Genre indie mendominasi platform digital.</p>
+
+<h2>
+<a href="artikel3.html">
+Indie Pop Jadi Genre Paling Viral 2026
+</a>
+</h2>
+
+<p>
+Genre indie pop semakin mendominasi platform streaming dan media sosial Indonesia.
+</p>
+
 </div>
 
 </div>
