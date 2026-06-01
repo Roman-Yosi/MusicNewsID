@@ -2,34 +2,126 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Berita Musik</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berita MusicNewsID</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f4f4;
+  margin:0;
+}
+
+header{
+  background:#111;
+  color:#fff;
+  padding:15px;
+  text-align:center;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+  padding:15px;
+}
+
+.card{
+  background:#fff;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.title{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.date{
+  font-size:12px;
+  color:gray;
+  margin-bottom:10px;
+}
+
+.content{
+  font-size:14px;
+  line-height:1.5;
+}
+
+.loading{
+  text-align:center;
+  padding:20px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-  <h1>Berita Musik</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="kategori.html">Kategori</a>
-  </nav>
+<h1>Berita MusicNewsID</h1>
 </header>
 
-<div class="container">
-  <div>
-    <div class="card">
-      <h2>Indie Pop Menguasai Platform Streaming</h2>
-      <p>Musik indie kini menjadi genre paling cepat berkembang di Indonesia.</p>
-    </div>
-
-    <div class="card">
-      <h2>Kolaborasi Global Semakin Banyak</h2>
-      <p>Artis lokal mulai menembus pasar internasional melalui digital platform.</p>
-    </div>
-  </div>
+<div class="container" id="newsContainer">
+  <div class="loading">⏳ Memuat berita...</div>
 </div>
 
-<footer>© 2026 MusicNewsID PRO</footer>
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+
+<script>
+
+// FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
+  authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
+  projectId: "ai-studio-applet-webapp-fbf67",
+  storageBucket: "ai-studio-applet-webapp-fbf67.appspot.com",
+  messagingSenderId: "831721646868",
+  appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const container = document.getElementById("newsContainer");
+
+// AMBIL DATA OTOMATIS
+db.collection("musicnews_articles")
+.orderBy("createdAt", "desc")
+.onSnapshot((snapshot) => {
+
+  container.innerHTML = "";
+
+  if(snapshot.empty){
+    container.innerHTML = "<p>Tidak ada berita</p>";
+    return;
+  }
+
+  snapshot.forEach((doc) => {
+
+    const data = doc.data();
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="title">${data.title || "Tanpa judul"}</div>
+      <div class="date">${data.createdAt || ""}</div>
+      <div class="content">${data.content || ""}</div>
+    `;
+
+    container.appendChild(card);
+
+  });
+
+}, (error) => {
+  container.innerHTML = "❌ Error loading data: " + error.message;
+});
+
+</script>
 
 </body>
 </html>
