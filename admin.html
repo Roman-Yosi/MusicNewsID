@@ -96,19 +96,16 @@ button:hover{
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
   authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
   projectId: "ai-studio-applet-webapp-fbf67",
-  storageBucket: "ai-studio-applet-webapp-fbf67.firebasestorage.app",
+
+  // 🔥 FIX PENTING (INI YANG SALAH SEBELUMNYA)
+  storageBucket: "ai-studio-applet-webapp-fbf67.appspot.com",
+
   messagingSenderId: "831721646868",
   appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
 };
@@ -132,6 +129,8 @@ window.publishNews = async function(){
 
     status.innerHTML = "⏳ Menyimpan berita...";
 
+    console.log("Mencoba kirim ke Firebase...");
+
     await addDoc(collection(db, "musicnews_articles"), {
       title: title,
       content: content,
@@ -147,7 +146,7 @@ window.publishNews = async function(){
   }catch(error){
 
     console.error(error);
-    status.innerHTML = "❌ Gagal publish (cek Firestore Rules)";
+    status.innerHTML = "❌ Gagal publish → cek Console (F12)";
 
   }
 
