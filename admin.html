@@ -10,6 +10,7 @@ body{font-family:Arial;background:#f4f4f4;margin:0}
 header{background:#111;color:#fff;padding:15px;text-align:center}
 .container{max-width:600px;margin:auto;padding:15px}
 .card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+
 input,textarea{
   width:100%;
   padding:12px;
@@ -17,7 +18,9 @@ input,textarea{
   border:1px solid #ccc;
   border-radius:6px;
   font-size:14px;
+  box-sizing:border-box;
 }
+
 button{
   width:100%;
   padding:12px;
@@ -29,8 +32,15 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
+
 button:hover{background:#333}
-.status{margin-top:10px;font-size:14px;word-break:break-word}
+
+.status{
+  margin-top:10px;
+  font-size:14px;
+  word-break:break-word;
+  min-height:20px;
+}
 </style>
 </head>
 
@@ -55,13 +65,13 @@ button:hover{background:#333}
   </div>
 </div>
 
-<!-- FIREBASE COMPAT (WAJIB) -->
+<!-- FIREBASE COMPAT -->
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 
 <script>
 
-// ===== FIREBASE CONFIG (FIXED) =====
+// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
   authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
@@ -71,13 +81,13 @@ const firebaseConfig = {
   appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
 };
 
-// INIT
+// INIT FIREBASE
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const status = document.getElementById("status");
 
-// ===== PUBLISH FUNCTION =====
+// ===== PUBLISH =====
 function publish(){
 
   const title = document.getElementById("judul").value.trim();
@@ -95,15 +105,26 @@ function publish(){
     content: content,
     createdAt: new Date().toISOString()
   })
+
   .then((docRef) => {
-    status.innerText = "✅ BERHASIL! ID: " + docRef.id;
+
+    console.log("SUCCESS:", docRef.id);
+
+    status.innerText =
+      "✅ BERHASIL! ID: " + docRef.id;
 
     document.getElementById("judul").value = "";
     document.getElementById("isi").value = "";
+
   })
+
   .catch((error) => {
+
     console.error("FIREBASE ERROR:", error);
-    status.innerText = "❌ ERROR: " + error.message;
+
+    status.innerText =
+      "❌ ERROR: " + error.code + " | " + error.message;
+
   });
 
 }
