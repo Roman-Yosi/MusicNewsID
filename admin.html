@@ -79,7 +79,7 @@ button:hover:not(:disabled){
   </div>
 </div>
 
-<!-- FIREBASE COMPAT -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 
@@ -102,7 +102,6 @@ const db = firebase.firestore();
 const status = document.getElementById("status");
 const btn = document.getElementById("btn");
 
-// ===== PUBLISH FUNCTION =====
 function publish(){
 
   const title = document.getElementById("judul").value.trim();
