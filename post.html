@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Detail Berita</title>
-<link rel="stylesheet" href="style.css">
+<style>
+body{font-family:Arial;background:#f4f4f4;margin:0;}
+header{background:#111;color:#fff;padding:15px;text-align:center;}
+.container{max-width:700px;margin:auto;padding:15px;}
+.card{background:#fff;padding:20px;border-radius:10px;}
+</style>
 </head>
 <body>
 
@@ -16,27 +21,20 @@
 </div>
 
 <script>
-const id = new URLSearchParams(window.location.search).get("id");
+let id = new URLSearchParams(window.location.search).get("id");
 
-const data = {
-  "1": {
-    title: "Roman Yosi Rilis Single Cinematic Baru",
-    content: "Karya musik emosional dan sinematik modern."
-  },
-  "2": {
-    title: "Indie Pop Semakin Viral",
-    content: "Genre indie semakin mendominasi platform streaming."
-  }
-};
+let data = JSON.parse(localStorage.getItem("news") || "[]");
 
-const post = document.getElementById("post");
+let item = data.find(d => d.id == id);
 
-if(!id || !data[id]){
+let post = document.getElementById("post");
+
+if(!item){
   post.innerHTML = "<h2>Artikel tidak ditemukan</h2>";
 } else {
   post.innerHTML = `
-    <h2>${data[id].title}</h2>
-    <p>${data[id].content}</p>
+    <h2>${item.title}</h2>
+    <p>${item.content}</p>
   `;
 }
 </script>
