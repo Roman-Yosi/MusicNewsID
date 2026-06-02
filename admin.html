@@ -39,6 +39,7 @@ input,textarea{
   border:1px solid #ccc;
   border-radius:6px;
   box-sizing:border-box;
+  font-size:14px;
 }
 
 button{
@@ -50,15 +51,22 @@ button{
   border:none;
   border-radius:6px;
   cursor:pointer;
+  font-weight:bold;
 }
 
 button:hover{
   background:#333;
 }
 
+button:disabled{
+  background:#555;
+  cursor:not-allowed;
+}
+
 .status{
   margin-top:10px;
   font-size:14px;
+  min-height:20px;
 }
 </style>
 </head>
@@ -73,10 +81,10 @@ button:hover{
   <div class="card">
 
     <input id="title" placeholder="Judul berita">
-    <input id="image" placeholder="URL gambar">
+    <input id="image" placeholder="URL gambar (opsional)">
     <textarea id="content" placeholder="Isi berita..." rows="6"></textarea>
 
-    <button onclick="publish()">Kirim Berita</button>
+    <button id="btn" onclick="publish()">Kirim Berita</button>
 
     <div class="status" id="status"></div>
 
@@ -101,36 +109,50 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const status = document.getElementById("status");
+const btn = document.getElementById("btn");
 
 async function publish(){
 
-  const title = document.getElementById("title").value;
-  const image = document.getElementById("image").value;
-  const content = document.getElementById("content").value;
+  const title = document.getElementById("title").value.trim();
+  const image = document.getElementById("image").value.trim();
+  const content = document.getElementById("content").value.trim();
 
   if(!title || !content){
     status.innerText = "❌ Judul & isi wajib diisi";
     return;
   }
 
-  try{
-    status.innerText = "⏳ Mengirim...";
+  try {
+    btn.disabled = true;
+    status.innerText = "⏳ Mengirim ke Firebase...";
 
-    await db.collection("musicnews_articles").add({
-      title,
-      image,
-      content,
-      createdAt: new Date().toISOString()
-    });
+    console.log("SEND START");
 
-    status.innerText = "✅ BERHASIL!";
-    
+    const docRef = await firebase.firestore()
+      .collection("musicnews_articles")
+      .add({
+        title,
+        image: image || "",
+        content,
+        createdAt: Date.now()
+      });
+
+    console.log("SUCCESS ID:", docRef.id);
+
+    status.innerText = "✅ BERHASIL! ID: " + docRef.id;
+
     document.getElementById("title").value = "";
     document.getElementById("image").value = "";
     document.getElementById("content").value = "";
 
-  }catch(e){
-    status.innerText = "❌ ERROR: " + e.message;
+  } catch (error) {
+
+    console.error("FIREBASE ERROR:", error);
+
+    status.innerText = "❌ ERROR: " + error.message;
+
+  } finally {
+    btn.disabled = false;
   }
 }
 </script>
