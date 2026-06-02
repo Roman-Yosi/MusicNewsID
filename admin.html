@@ -1,5 +1,4 @@
 <script type="module">
-
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const supabase = createClient(
@@ -8,18 +7,22 @@ const supabase = createClient(
 );
 
 /* =========================
-   LOGIN
+   STATE
 ========================= */
 let isLogin = false;
 
+/* =========================
+   LOGIN
+========================= */
 function login(){
-  const pass = document.getElementById("pass").value;
-  const adminPass = "romanyosi123";
+  const pass = document.getElementById("pass")?.value || "";
 
-  if(pass === adminPass){
+  if(pass === "romanyosi123"){
     isLogin = true;
+
     document.getElementById("loginBox").style.display = "none";
     document.querySelector(".container").style.display = "grid";
+
     init();
   } else {
     alert("Password salah!");
@@ -27,37 +30,7 @@ function login(){
 }
 
 /* =========================
-   PUBLISH (MASIH LOCAL STORAGE)
-========================= */
-function publish(){
-  if(!check()) return;
-
-  let title = document.getElementById("title").value;
-  let image = document.getElementById("image").value;
-  let content = document.getElementById("content").value;
-
-  if(!title || !content){
-    alert("Judul & isi wajib diisi!");
-    return;
-  }
-
-  // NANTI DIUBAH KE SUPABASE
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  data.unshift({
-    id: Date.now(),
-    title,
-    image,
-    content
-  });
-
-  localStorage.setItem("news", JSON.stringify(data));
-
-  load();
-}
-
-/* =========================
-   CHECK LOGIN
+   CHECK
 ========================= */
 function check(){
   if(!isLogin){
@@ -76,11 +49,13 @@ function init(){
 }
 
 /* =========================
-   LOAD ARTIKEL
+   LOAD NEWS
 ========================= */
 function load(){
+  const list = document.getElementById("list");
+  if(!list) return;
+
   let data = JSON.parse(localStorage.getItem("news") || "[]");
-  let list = document.getElementById("list");
 
   list.innerHTML = "";
 
@@ -88,12 +63,41 @@ function load(){
     list.innerHTML += `
       <div class="card">
         <h3>${item.title}</h3>
-        ${item.image ? `<img src="${item.image}" style="width:100%;">` : ""}
-        <p>${item.content.substring(0,120)}...</p>
+        ${item.image ? `<img src="${item.image}" style="width:100%">` : ""}
+        <p>${(item.content || "").substring(0,120)}...</p>
         <button class="danger" onclick="hapus(${index})">Hapus</button>
       </div>
     `;
   });
+}
+
+/* =========================
+   PUBLISH
+========================= */
+function publish(){
+  if(!check()) return;
+
+  const title = document.getElementById("title")?.value;
+  const image = document.getElementById("image")?.value;
+  const content = document.getElementById("content")?.value;
+
+  if(!title || !content){
+    alert("Judul & isi wajib diisi!");
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  data.unshift({
+    id: Date.now(),
+    title,
+    image,
+    content
+  });
+
+  localStorage.setItem("news", JSON.stringify(data));
+
+  load();
 }
 
 /* =========================
@@ -107,16 +111,20 @@ function hapus(i){
 }
 
 /* =========================
-   GALERI (masih localStorage)
+   GALLERY
 ========================= */
 function uploadGallery(){
   if(!check()) return;
 
-  const file = document.getElementById("fileInput").files[0];
+  const file = document.getElementById("fileInput")?.files[0];
+  if(!file){
+    alert("Pilih gambar dulu!");
+    return;
+  }
 
   const reader = new FileReader();
 
-  reader.onload = function(e){
+  reader.onload = (e) => {
     let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
     gallery.unshift({
@@ -132,24 +140,30 @@ function uploadGallery(){
   reader.readAsDataURL(file);
 }
 
-/* LOAD GALERI */
+/* =========================
+   LOAD GALLERY
+========================= */
 function loadGallery(){
+  const box = document.getElementById("galleryList");
+  if(!box) return;
+
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-  let box = document.getElementById("galleryList");
 
   box.innerHTML = "";
 
   gallery.forEach((item,i)=>{
     box.innerHTML += `
       <div class="card">
-        <img src="${item.img}" style="width:100%;">
+        <img src="${item.img}" style="width:100%">
         <button class="danger" onclick="deleteGallery(${i})">Hapus</button>
       </div>
     `;
   });
 }
 
-/* DELETE GALERI */
+/* =========================
+   DELETE GALLERY
+========================= */
 function deleteGallery(i){
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
   gallery.splice(i,1);
@@ -157,4 +171,12 @@ function deleteGallery(i){
   loadGallery();
 }
 
+/* =========================
+   🔥 FIX PENTING: EXPOSE KE WINDOW
+========================= */
+window.login = login;
+window.publish = publish;
+window.hapus = hapus;
+window.uploadGallery = uploadGallery;
+window.deleteGallery = deleteGallery;
 </script>
