@@ -1,37 +1,28 @@
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-const supabase = createClient(
-  "https://YOUR_PROJECT_URL.supabase.co",
-  "sb_publishable_3FDzjw1DsNnZCn_0TXSXGA_-EE6IxdY"
-);
-
-/* =========================
-   STATE
-========================= */
+<script>
 let isLogin = false;
 
-/* =========================
-   LOGIN
-========================= */
+/* LOGIN */
 function login(){
-  const pass = document.getElementById("pass")?.value || "";
+  try {
+    const pass = document.getElementById("pass").value;
 
-  if(pass === "romanyosi123"){
-    isLogin = true;
+    if(pass === "romanyosi123"){
+      isLogin = true;
 
-    document.getElementById("loginBox").style.display = "none";
-    document.querySelector(".container").style.display = "grid";
+      document.getElementById("loginBox").style.display = "none";
+      document.querySelector(".container").style.display = "grid";
 
-    init();
-  } else {
-    alert("Password salah!");
+      init();
+    } else {
+      alert("Password salah!");
+    }
+  } catch(e){
+    console.log(e);
+    alert("Login error");
   }
 }
 
-/* =========================
-   CHECK
-========================= */
+/* CHECK */
 function check(){
   if(!isLogin){
     alert("Silakan login dulu!");
@@ -40,59 +31,49 @@ function check(){
   return true;
 }
 
-/* =========================
-   INIT
-========================= */
+/* INIT */
 function init(){
   load();
   loadGallery();
 }
 
-/* =========================
-   LOAD NEWS
-========================= */
+/* LOAD NEWS */
 function load(){
-  const list = document.getElementById("list");
-  if(!list) return;
+  try {
+    const list = document.getElementById("list");
+    if(!list) return;
 
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
+    let data = JSON.parse(localStorage.getItem("news") || "[]");
 
-  list.innerHTML = "";
+    list.innerHTML = "";
 
-  data.forEach((item, index) => {
-    list.innerHTML += `
-      <div class="card">
-        <h3>${item.title}</h3>
-        ${item.image ? `<img src="${item.image}" style="width:100%">` : ""}
-        <p>${(item.content || "").substring(0,120)}...</p>
-        <button class="danger" onclick="hapus(${index})">Hapus</button>
-      </div>
-    `;
-  });
+    data.forEach((item, index) => {
+      list.innerHTML += `
+        <div class="card">
+          <h3>${item.title || ""}</h3>
+          ${item.image ? `<img src="${item.image}" style="width:100%">` : ""}
+          <p>${(item.content || "").substring(0,120)}</p>
+          <button onclick="hapus(${index})">Hapus</button>
+        </div>
+      `;
+    });
+
+  } catch(e){
+    console.log("LOAD ERROR", e);
+  }
 }
 
-/* =========================
-   PUBLISH
-========================= */
+/* PUBLISH */
 function publish(){
   if(!check()) return;
-
-  const title = document.getElementById("title")?.value;
-  const image = document.getElementById("image")?.value;
-  const content = document.getElementById("content")?.value;
-
-  if(!title || !content){
-    alert("Judul & isi wajib diisi!");
-    return;
-  }
 
   let data = JSON.parse(localStorage.getItem("news") || "[]");
 
   data.unshift({
     id: Date.now(),
-    title,
-    image,
-    content
+    title: document.getElementById("title").value,
+    image: document.getElementById("image").value,
+    content: document.getElementById("content").value
   });
 
   localStorage.setItem("news", JSON.stringify(data));
@@ -100,9 +81,7 @@ function publish(){
   load();
 }
 
-/* =========================
-   DELETE
-========================= */
+/* DELETE */
 function hapus(i){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   data.splice(i,1);
@@ -110,21 +89,19 @@ function hapus(i){
   load();
 }
 
-/* =========================
-   GALLERY
-========================= */
+/* GALLERY */
 function uploadGallery(){
   if(!check()) return;
 
-  const file = document.getElementById("fileInput")?.files[0];
+  const file = document.getElementById("fileInput").files[0];
   if(!file){
-    alert("Pilih gambar dulu!");
+    alert("Pilih gambar!");
     return;
   }
 
   const reader = new FileReader();
 
-  reader.onload = (e) => {
+  reader.onload = function(e){
     let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
     gallery.unshift({
@@ -133,16 +110,13 @@ function uploadGallery(){
     });
 
     localStorage.setItem("gallery", JSON.stringify(gallery));
-
     loadGallery();
   };
 
   reader.readAsDataURL(file);
 }
 
-/* =========================
-   LOAD GALLERY
-========================= */
+/* LOAD GALLERY */
 function loadGallery(){
   const box = document.getElementById("galleryList");
   if(!box) return;
@@ -155,15 +129,13 @@ function loadGallery(){
     box.innerHTML += `
       <div class="card">
         <img src="${item.img}" style="width:100%">
-        <button class="danger" onclick="deleteGallery(${i})">Hapus</button>
+        <button onclick="deleteGallery(${i})">Hapus</button>
       </div>
     `;
   });
 }
 
-/* =========================
-   DELETE GALLERY
-========================= */
+/* DELETE */
 function deleteGallery(i){
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
   gallery.splice(i,1);
@@ -171,9 +143,7 @@ function deleteGallery(i){
   loadGallery();
 }
 
-/* =========================
-   🔥 FIX PENTING: EXPOSE KE WINDOW
-========================= */
+/* GLOBAL */
 window.login = login;
 window.publish = publish;
 window.hapus = hapus;
