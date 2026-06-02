@@ -26,6 +26,16 @@
       color: #aaa;
       padding: 20px;
     }
+
+    nav a {
+      margin-left: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    nav a:hover {
+      color: #ffcc00;
+    }
   </style>
 </head>
 
@@ -34,11 +44,11 @@
 <header>
   <div class="logo">📰 MusicNewsID</div>
 
+  <!-- MENU ADMIN SUDAH DIHAPUS -->
   <nav>
     <a href="index.html">Home</a>
     <a href="news.html">News</a>
     <a href="post.html">Post</a>
-    <a href="admin.html">Admin</a>
   </nav>
 </header>
 
@@ -88,7 +98,7 @@ function loadNews() {
   container.innerHTML = html;
 }
 
-// anti error / injection
+// anti error / security kecil
 function escapeHTML(text) {
   return text
     .replaceAll("&", "&amp;")
