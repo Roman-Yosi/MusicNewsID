@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - MusicNewsID</title>
+<title>Admin Fix</title>
 
 <style>
 body{
@@ -17,11 +17,12 @@ body{
 #loginBox{
   position:fixed;
   inset:0;
+  background:#0f172a;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  background:#0f172a;
+  z-index:999;
 }
 
 #loginBox input{
@@ -39,21 +40,12 @@ body{
   border-radius:6px;
 }
 
-/* HEADER */
-header{
-  padding:15px;
-  text-align:center;
-  background:#111827;
-  border-bottom:2px solid #22c55e;
-}
-
-/* CONTAINER */
+/* ADMIN */
 .container{
   display:none;
   padding:15px;
 }
 
-/* CARD */
 .card{
   background:#111827;
   padding:15px;
@@ -61,219 +53,16 @@ header{
   border-radius:10px;
 }
 
-input, textarea{
+input,textarea{
   width:100%;
   padding:10px;
   margin-top:10px;
   border-radius:6px;
   border:none;
-  box-sizing:border-box;
 }
 
 button{
-  margin-top:10px;
+  width:100%;
   padding:10px;
-  width:100%;
-  border:none;
-  border-radius:6px;
-  background:#22c55e;
-  font-weight:bold;
-}
-
-.danger{
-  background:red;
-}
-
-img{
-  width:100%;
   margin-top:10px;
-  border-radius:8px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<div id="loginBox">
-  <h2>🔐 Admin Login</h2>
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">Masuk</button>
-</div>
-
-<header>
-<h2>🎵 MusicNewsID Admin</h2>
-</header>
-
-<div class="container">
-
-  <div class="card">
-    <h3>Tambah Artikel</h3>
-    <input id="title" placeholder="Judul">
-    <input id="image" placeholder="URL Gambar">
-    <textarea id="content" placeholder="Isi artikel"></textarea>
-    <button onclick="publish()">Publish</button>
-  </div>
-
-  <div class="card">
-    <h3>Daftar Artikel</h3>
-    <div id="list"></div>
-  </div>
-
-  <div class="card">
-    <h3>Galeri</h3>
-    <input type="file" id="fileInput">
-    <button onclick="uploadGallery()">Upload</button>
-    <div id="galleryList"></div>
-  </div>
-
-</div>
-
-<script>
-let isLogin = false;
-
-/* LOGIN - FIX HP SAFE */
-function login(){
-  const passEl = document.getElementById("pass");
-  if(!passEl) return alert("Input tidak ditemukan");
-
-  if(passEl.value === "romanyosi123"){
-    isLogin = true;
-
-    document.getElementById("loginBox").style.display = "none";
-    document.querySelector(".container").style.display = "block";
-
-    init();
-  } else {
-    alert("Password salah!");
-  }
-}
-
-/* INIT */
-function init(){
-  load();
-  loadGallery();
-}
-
-/* CHECK */
-function check(){
-  if(!isLogin){
-    alert("Login dulu!");
-    return false;
-  }
-  return true;
-}
-
-/* PUBLISH */
-function publish(){
-  if(!check()) return;
-
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  data.unshift({
-    id: Date.now(),
-    title: document.getElementById("title").value || "",
-    image: document.getElementById("image").value || "",
-    content: document.getElementById("content").value || ""
-  });
-
-  localStorage.setItem("news", JSON.stringify(data));
-  load();
-}
-
-/* LOAD */
-function load(){
-  const list = document.getElementById("list");
-  if(!list) return;
-
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  list.innerHTML = "";
-
-  if(data.length === 0){
-    list.innerHTML = "<p>Belum ada artikel</p>";
-    return;
-  }
-
-  data.forEach((item,i)=>{
-    list.innerHTML += `
-      <div class="card">
-        <h4>${item.title}</h4>
-        ${item.image ? `<img src="${item.image}">` : ""}
-        <p>${(item.content || "").substring(0,120)}...</p>
-        <button class="danger" onclick="hapus(${i})">Hapus</button>
-      </div>
-    `;
-  });
-}
-
-/* DELETE */
-function hapus(i){
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-  data.splice(i,1);
-  localStorage.setItem("news", JSON.stringify(data));
-  load();
-}
-
-/* GALLERY */
-function uploadGallery(){
-  if(!check()) return;
-
-  const file = document.getElementById("fileInput")?.files[0];
-  if(!file){
-    alert("Pilih gambar!");
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = (e)=>{
-    let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-
-    gallery.unshift({
-      id: Date.now(),
-      img: e.target.result
-    });
-
-    localStorage.setItem("gallery", JSON.stringify(gallery));
-    loadGallery();
-  };
-
-  reader.readAsDataURL(file);
-}
-
-/* LOAD GALLERY */
-function loadGallery(){
-  const box = document.getElementById("galleryList");
-  if(!box) return;
-
-  let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-
-  box.innerHTML = "";
-
-  if(gallery.length === 0){
-    box.innerHTML = "<p>Belum ada gambar</p>";
-    return;
-  }
-
-  gallery.forEach((item,i)=>{
-    box.innerHTML += `
-      <div class="card">
-        <img src="${item.img}">
-        <button class="danger" onclick="deleteGallery(${i})">Hapus</button>
-      </div>
-    `;
-  });
-}
-
-/* DELETE GALLERY */
-function deleteGallery(i){
-  let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-  gallery.splice(i,1);
-  localStorage.setItem("gallery", JSON.stringify(gallery));
-  loadGallery();
-}
-</script>
-
-</body>
-</html>
+  background:#22c55e;
