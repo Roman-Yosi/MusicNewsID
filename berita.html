@@ -69,13 +69,9 @@ header{
   font-size:13px;
 }
 
-.btn:hover{
-  background:#333;
-}
-
 .status{
   text-align:center;
-  padding:10px;
+  padding:20px;
   color:#555;
 }
 </style>
@@ -97,7 +93,6 @@ header{
 
 <script>
 
-// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
   authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
@@ -107,15 +102,23 @@ const firebaseConfig = {
   appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
 };
 
-// INIT FIREBASE
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const container = document.getElementById("newsContainer");
 
-// REALTIME LOAD
+function formatDate(data){
+  if(!data) return "";
+  if(typeof data === "object" && data.toDate){
+    return data.toDate().toLocaleString();
+  }
+  return data;
+}
+
 db.collection("musicnews_articles")
-.onSnapshot((snapshot) => {
+.orderBy("createdAt", "desc")
+.get()
+.then((snapshot) => {
 
   container.innerHTML = "";
 
@@ -128,27 +131,14 @@ db.collection("musicnews_articles")
 
     const data = doc.data();
 
-    const title = data.title || "Tanpa judul";
-    const content = data.content || "";
-    const image = data.image || "";
-
-    let date = "";
-    if(data.createdAt){
-      if(typeof data.createdAt === "object" && data.createdAt.toDate){
-        date = data.createdAt.toDate().toLocaleString();
-      } else {
-        date = data.createdAt;
-      }
-    }
-
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      ${image ? `<img src="${image}" alt="thumbnail">` : ""}
-      <div class="title">${title}</div>
-      <div class="date">${date}</div>
-      <div class="content">${content}</div>
+      ${data.image ? `<img src="${data.image}">` : ""}
+      <div class="title">${data.title || "Tanpa judul"}</div>
+      <div class="date">${formatDate(data.createdAt)}</div>
+      <div class="content">${data.content || ""}</div>
 
       <a class="btn" href="post.html?id=${doc.id}">
         Baca Selengkapnya
@@ -159,11 +149,10 @@ db.collection("musicnews_articles")
 
   });
 
-}, (error) => {
-
+})
+.catch((error) => {
   container.innerHTML =
     "<div class='status'>❌ Error: " + error.message + "</div>";
-
 });
 
 </script>
