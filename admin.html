@@ -24,10 +24,16 @@
       cursor: pointer;
       font-weight: bold;
       margin-right: 5px;
+      margin-top: 5px;
     }
 
     button:hover {
-      opacity: 0.8;
+      opacity: 0.85;
+    }
+
+    .card small {
+      color: #aaa;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -35,12 +41,11 @@
 <body>
 
 <header>
-  <div class="logo">MusicNewsID Admin</div>
+  <div class="logo">🛠 MusicNewsID Admin Panel</div>
 
   <nav>
     <a href="index.html">Home</a>
     <a href="news.html">News</a>
-    <a href="admin.html">Admin</a>
   </nav>
 </header>
 
@@ -55,12 +60,14 @@
   <button onclick="clearForm()">Reset</button>
   <button onclick="clearAll()">Hapus Semua</button>
 
-  <h3>📌 Preview</h3>
+  <h3>📌 Preview Artikel</h3>
   <div id="list"></div>
 
 </section>
 
 <script>
+
+// ================= SAVE NEWS =================
 function saveNews() {
   let title = document.getElementById("title").value.trim();
   let content = document.getElementById("content").value.trim();
@@ -72,13 +79,19 @@ function saveNews() {
 
   let news = JSON.parse(localStorage.getItem("news") || "[]");
 
-  news.unshift({title, content});
+  news.unshift({
+    title,
+    content,
+    time: new Date().toLocaleString()
+  });
+
   localStorage.setItem("news", JSON.stringify(news));
 
   clearForm();
   loadNews();
 }
 
+// ================= LOAD NEWS =================
 function loadNews() {
   let news = JSON.parse(localStorage.getItem("news") || "[]");
 
@@ -89,9 +102,13 @@ function loadNews() {
   }
 
   news.forEach(n => {
+
+    if (!n || !n.title || !n.content) return;
+
     html += `
       <div class="card">
         <h3>${escapeHTML(n.title)}</h3>
+        <small>🕒 ${n.time || "-"}</small>
         <p>${escapeHTML(n.content)}</p>
       </div>
     `;
@@ -100,11 +117,13 @@ function loadNews() {
   document.getElementById("list").innerHTML = html;
 }
 
+// ================= CLEAR FORM =================
 function clearForm() {
   document.getElementById("title").value = "";
   document.getElementById("content").value = "";
 }
 
+// ================= DELETE ALL NEWS =================
 function clearAll() {
   if (confirm("Hapus semua berita?")) {
     localStorage.removeItem("news");
@@ -112,7 +131,7 @@ function clearAll() {
   }
 }
 
-// anti rusak HTML
+// ================= SECURITY TEXT =================
 function escapeHTML(text) {
   return text
     .replaceAll("&", "&amp;")
@@ -120,7 +139,9 @@ function escapeHTML(text) {
     .replaceAll(">", "&gt;");
 }
 
+// INIT
 loadNews();
+
 </script>
 
 </body>
