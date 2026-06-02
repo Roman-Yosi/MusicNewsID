@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <url>
-    <loc>https://roman-yosi.github.io/MusicNewsID/index.html</loc>
-  </url>
-
-  <url>
-    <loc>https://roman-yosi.github.io/MusicNewsID/news.html</loc>
-  </url>
-
-  <url>
-    <loc>https://roman-yosi.github.io/MusicNewsID/post.html</loc>
-  </url>
-
-  <url>
-    <loc>https://roman-yosi.github.io/MusicNewsID/categories.html</loc>
-  </url>
+<url><loc>https://roman-yosi.github.io/MusicNewsID/</loc></url>
+<url><loc>https://roman-yosi.github.io/MusicNewsID/index.html</loc></url>
+<url><loc>https://roman-yosi.github.io/MusicNewsID/news.html</loc></url>
+<url><loc>https://roman-yosi.github.io/MusicNewsID/post.html?id=1</loc></url>
 
 </urlset>
