@@ -13,36 +13,7 @@ body{
   color:#fff;
 }
 
-/* LOGIN */
-#loginBox{
-  position:fixed;
-  inset:0;
-  background:#0f172a;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
-}
-
-#loginBox input{
-  padding:10px;
-  width:250px;
-  border:none;
-  border-radius:6px;
-}
-
-#loginBox button{
-  margin-top:10px;
-  padding:10px 20px;
-  background:#22c55e;
-  border:none;
-  border-radius:6px;
-}
-
-/* ADMIN */
 .container{
-  display:none;
   padding:15px;
 }
 
@@ -86,14 +57,6 @@ img{
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginBox">
-  <h2>🔐 Admin Login</h2>
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">Masuk</button>
-</div>
-
-<!-- ADMIN -->
 <div class="container">
 
   <div class="card">
@@ -112,41 +75,6 @@ img{
 </div>
 
 <script>
-let isLogin = false;
-
-/* LOGIN */
-function login(){
-  const pass = document.getElementById("pass").value;
-
-  if(pass === "romanyosi123"){
-    isLogin = true;
-
-    document.getElementById("loginBox").style.display = "none";
-    document.querySelector(".container").style.display = "block";
-
-    load();
-  } else {
-    alert("Password salah!");
-  }
-}
-
-/* PUBLISH */
-function publish(){
-  if(!isLogin) return;
-
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  data.unshift({
-    id: Date.now(),
-    title: document.getElementById("title").value,
-    image: document.getElementById("image").value,
-    content: document.getElementById("content").value
-  });
-
-  localStorage.setItem("news", JSON.stringify(data));
-
-  load();
-}
 
 /* LOAD */
 function load(){
@@ -172,6 +100,22 @@ function load(){
   });
 }
 
+/* PUBLISH */
+function publish(){
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  data.unshift({
+    id: Date.now(),
+    title: document.getElementById("title").value,
+    image: document.getElementById("image").value,
+    content: document.getElementById("content").value
+  });
+
+  localStorage.setItem("news", JSON.stringify(data));
+
+  load();
+}
+
 /* DELETE */
 function hapus(i){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
@@ -179,6 +123,9 @@ function hapus(i){
   localStorage.setItem("news", JSON.stringify(data));
   load();
 }
+
+load();
+
 </script>
 
 </body>
