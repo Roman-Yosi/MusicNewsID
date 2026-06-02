@@ -107,14 +107,16 @@ const db = firebase.firestore();
 
 const container = document.getElementById("newsContainer");
 
+// FORMAT AMAN
 function formatDate(data){
   if(!data) return "";
-  if(typeof data === "object" && data.toDate){
+  if(data && data.toDate){
     return data.toDate().toLocaleString();
   }
   return data;
 }
 
+// AMBIL DATA
 db.collection("musicnews_articles")
 .orderBy("createdAt", "desc")
 .get()
@@ -134,11 +136,16 @@ db.collection("musicnews_articles")
     const card = document.createElement("div");
     card.className = "card";
 
+    const image = data.image ? `<img src="${data.image}">` : "";
+    const title = data.title || "Tanpa judul";
+    const content = data.content || "";
+    const date = formatDate(data.createdAt);
+
     card.innerHTML = `
-      ${data.image ? `<img src="${data.image}">` : ""}
-      <div class="title">${data.title || "Tanpa judul"}</div>
-      <div class="date">${formatDate(data.createdAt)}</div>
-      <div class="content">${data.content || ""}</div>
+      ${image}
+      <div class="title">${title}</div>
+      <div class="date">${date}</div>
+      <div class="content">${content}</div>
 
       <a class="btn" href="post.html?id=${doc.id}">
         Baca Selengkapnya
