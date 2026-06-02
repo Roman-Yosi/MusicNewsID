@@ -2,68 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Berita - MusicNewsID</title>
-
-<style>
-body{
-  font-family:Arial;
-  margin:0;
-  background:#f4f4f4;
-}
-
-header{
-  background:#111;
-  color:#fff;
-  padding:15px;
-  text-align:center;
-}
-
-.container{
-  max-width:800px;
-  margin:auto;
-  padding:15px;
-}
-
-.card{
-  background:#fff;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
-
-img{
-  width:100%;
-  border-radius:10px;
-  margin-bottom:15px;
-}
-
-.title{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:10px;
-}
-
-.date{
-  font-size:12px;
-  color:gray;
-  margin-bottom:15px;
-}
-
-.content{
-  font-size:16px;
-  line-height:1.6;
-  white-space:pre-wrap;
-}
-
-.status{
-  text-align:center;
-  padding:20px;
-  color:#555;
-}
-</style>
+<title>Detail Berita</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header>
@@ -71,84 +12,33 @@ img{
 </header>
 
 <div class="container">
-  <div id="content">
-    <div class="status">⏳ Memuat artikel...</div>
-  </div>
+<div class="card" id="post"></div>
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
-
 <script>
+const id = new URLSearchParams(window.location.search).get("id");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
-  authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
-  projectId: "ai-studio-applet-webapp-fbf67",
-  storageBucket: "ai-studio-applet-webapp-fbf67.appspot.com",
-  messagingSenderId: "831721646868",
-  appId: "1:831721646868:web:308bbf0a9f796f11b4f001"
+const data = {
+  "1": {
+    title: "Roman Yosi Rilis Single Cinematic Baru",
+    content: "Karya musik emosional dan sinematik modern."
+  },
+  "2": {
+    title: "Indie Pop Semakin Viral",
+    content: "Genre indie semakin mendominasi platform streaming."
+  }
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const post = document.getElementById("post");
 
-const container = document.getElementById("content");
-
-// AMBIL ID
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
-// DEBUG (penting)
-console.log("ARTICLE ID:", id);
-
-// JIKA ID KOSONG
-if(!id){
-  container.innerHTML = `
-    <div class="status">
-      ❌ Artikel tidak ditemukan<br>
-      <small>ID kosong</small>
-    </div>
-  `;
+if(!id || !data[id]){
+  post.innerHTML = "<h2>Artikel tidak ditemukan</h2>";
 } else {
-
-  db.collection("musicnews_articles").doc(id).get()
-  .then((doc) => {
-
-    if(!doc.exists){
-      container.innerHTML = `
-        <div class="status">
-          ❌ Artikel tidak ditemukan<br>
-          <small>ID: ${id}</small>
-        </div>
-      `;
-      return;
-    }
-
-    const data = doc.data();
-
-    container.innerHTML = `
-      <div class="card">
-        ${data.image ? `<img src="${data.image}">` : ""}
-        <div class="title">${data.title || "Tanpa Judul"}</div>
-        <div class="date">
-          ${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : ""}
-        </div>
-        <div class="content">${data.content || ""}</div>
-      </div>
-    `;
-  })
-  .catch((error) => {
-    container.innerHTML = `
-      <div class="status">
-        ❌ Error Firebase: ${error.message}
-      </div>
-    `;
-  });
-
+  post.innerHTML = `
+    <h2>${data[id].title}</h2>
+    <p>${data[id].content}</p>
+  `;
 }
-
 </script>
 
 </body>
