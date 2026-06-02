@@ -3,75 +3,119 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin MusicNewsID</title>
+  <title>Admin Dashboard - MusicNewsID</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    .panel {
+      background:#1c1c1c;
+      padding:20px;
+      border-radius:10px;
+      margin-bottom:20px;
+    }
+
+    input, textarea {
+      width:100%;
+      padding:10px;
+      margin-top:8px;
+      margin-bottom:12px;
+      border-radius:6px;
+      border:1px solid #333;
+      background:#111;
+      color:white;
+    }
+
+    button {
+      padding:10px 15px;
+      background:#ffcc00;
+      border:none;
+      font-weight:bold;
+      cursor:pointer;
+      border-radius:6px;
+    }
+
+    button:hover {
+      opacity:0.8;
+    }
+
+    .badge {
+      display:inline-block;
+      padding:4px 8px;
+      background:#ffcc00;
+      color:black;
+      font-size:12px;
+      border-radius:4px;
+      margin-bottom:10px;
+    }
+
+    .card small {
+      color:#aaa;
+      font-size:12px;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">MusicNewsID Admin</div>
+  <div class="logo">🛠 MusicNewsID Admin Panel</div>
 </header>
 
-<section class="container" id="loginBox">
+<section class="container">
 
-  <h2>🔒 Login Admin</h2>
+  <!-- DASHBOARD INFO -->
+  <div class="panel">
+    <span class="badge">ADMIN DASHBOARD</span>
+    <h2>📊 Control Berita MusicNewsID</h2>
+    <p>Gunakan panel ini untuk menambah, melihat, dan mengelola artikel berita musik.</p>
+  </div>
 
-  <input type="password" id="pass" placeholder="Masukkan password">
-  <br><br>
+  <!-- FORM INPUT -->
+  <div class="panel">
+    <h3>📝 Buat Artikel Baru</h3>
 
-  <button onclick="login()">Masuk</button>
+    <label>Judul Artikel</label>
+    <input id="title" placeholder="Contoh: Roman Yosi Rilis Lagu Baru">
 
-</section>
+    <label>Isi Artikel</label>
+    <textarea id="content" rows="6" placeholder="Tulis isi berita di sini..."></textarea>
 
-<section class="container" id="adminPanel" style="display:none;">
+    <button onclick="saveNews()">+ Publikasikan</button>
+  </div>
 
-  <h2>📝 Tambah Berita</h2>
-
-  <input id="title" placeholder="Judul berita"><br><br>
-  <textarea id="content" placeholder="Isi berita"></textarea><br><br>
-
-  <button onclick="saveNews()">Simpan</button>
-
-  <h3>📌 Preview</h3>
-  <div id="list"></div>
+  <!-- PREVIEW -->
+  <div class="panel">
+    <h3>📌 Artikel Terbaru (Preview)</h3>
+    <div id="list"></div>
+  </div>
 
 </section>
 
 <script>
-
-const PASSWORD = "12345666"; // PASSWORD KAMU (tanpa # biar aman)
-
-function login() {
-  let pass = document.getElementById("pass").value;
-
-  if (pass === PASSWORD) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
-    loadNews();
-  } else {
-    alert("Password salah!");
-  }
-}
 
 function saveNews() {
   let title = document.getElementById("title").value.trim();
   let content = document.getElementById("content").value.trim();
 
   if (!title || !content) {
-    alert("Isi tidak boleh kosong!");
+    alert("Judul dan isi wajib diisi!");
     return;
   }
 
   let news = JSON.parse(localStorage.getItem("news") || "[]");
 
-  news.unshift({title, content});
-  localStorage.setItem("news", JSON.stringify(news));
+  news.unshift({
+    title,
+    content,
+    time: new Date().toLocaleString()
+  });
 
-  loadNews();
+  localStorage.setItem("news", JSON.stringify(news));
 
   document.getElementById("title").value = "";
   document.getElementById("content").value = "";
+
+  loadNews();
 }
 
 function loadNews() {
@@ -80,17 +124,18 @@ function loadNews() {
   let html = "";
 
   if (news.length === 0) {
-    html = "<p>Belum ada berita.</p>";
+    html = "<p>Belum ada artikel dipublikasikan.</p>";
   }
 
   news.forEach(n => {
 
-    if (!n || !n.title || !n.content) return; // 🔥 FIX ERROR DATA
+    if (!n || !n.title || !n.content) return;
 
     html += `
       <div class="card">
         <h3>${escapeHTML(n.title)}</h3>
-        <p>${escapeHTML(n.content)}</p>
+        <small>🕒 ${n.time || "unknown"}</small>
+        <p>${escapeHTML(n.content.substring(0, 150))}...</p>
       </div>
     `;
   });
@@ -98,13 +143,14 @@ function loadNews() {
   document.getElementById("list").innerHTML = html;
 }
 
-// 🔒 Anti script / error HTML
 function escapeHTML(text) {
   return text
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
 }
+
+loadNews();
 
 </script>
 
