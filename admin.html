@@ -1,6 +1,9 @@
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+/* =========================
+   SUPABASE (FIX URL)
+========================= */
 const supabase = createClient(
   "https://YOUR_PROJECT_URL.supabase.co",
   "sb_publishable_3FDzjw1DsNnZCn_0TXSXGA_-EE6IxdY"
@@ -12,27 +15,32 @@ const supabase = createClient(
 let isLogin = false;
 
 /* =========================
-   INIT SAFE
+   SAFETY: CEGAH BLANK SCREEN
 ========================= */
+window.addEventListener("error", (e) => {
+  console.log("JS ERROR:", e.message);
+});
+
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("Admin ready");
+  console.log("Admin loaded OK");
 });
 
 /* =========================
    LOGIN
 ========================= */
-function login(){
-  const pass = document.getElementById("pass")?.value || "";
-  const adminPass = "romanyosi123";
+function login() {
+  const pass = document.getElementById("pass")?.value;
 
-  if(pass === adminPass){
+  if (!pass) {
+    alert("Isi password dulu!");
+    return;
+  }
+
+  if (pass === "romanyosi123") {
     isLogin = true;
 
-    const loginBox = document.getElementById("loginBox");
-    const container = document.querySelector(".container");
-
-    if(loginBox) loginBox.style.display = "none";
-    if(container) container.style.display = "grid";
+    document.getElementById("loginBox").style.display = "none";
+    document.querySelector(".container").style.display = "grid";
 
     init();
   } else {
@@ -43,8 +51,8 @@ function login(){
 /* =========================
    CHECK LOGIN
 ========================= */
-function check(){
-  if(!isLogin){
+function check() {
+  if (!isLogin) {
     alert("Silakan login dulu!");
     return false;
   }
@@ -54,7 +62,7 @@ function check(){
 /* =========================
    INIT
 ========================= */
-function init(){
+function init() {
   load();
   loadGallery();
 }
@@ -62,23 +70,23 @@ function init(){
 /* =========================
    SAFE TEXT
 ========================= */
-function safe(text){
-  return String(text || "")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;");
+function safe(t) {
+  return String(t || "")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 /* =========================
    PUBLISH (LOCAL STORAGE)
 ========================= */
-function publish(){
-  if(!check()) return;
+function publish() {
+  if (!check()) return;
 
-  const title = document.getElementById("title")?.value || "";
-  const image = document.getElementById("image")?.value || "";
-  const content = document.getElementById("content")?.value || "";
+  const title = document.getElementById("title")?.value;
+  const image = document.getElementById("image")?.value;
+  const content = document.getElementById("content")?.value;
 
-  if(!title || !content){
+  if (!title || !content) {
     alert("Judul & isi wajib diisi!");
     return;
   }
@@ -95,52 +103,53 @@ function publish(){
   localStorage.setItem("news", JSON.stringify(data));
 
   load();
+
+  alert("Berhasil dipublish!");
 }
 
 /* =========================
-   LOAD NEWS
+   LOAD NEWS (ANTI BLANK)
 ========================= */
-function load(){
+function load() {
   const list = document.getElementById("list");
-  if(!list) return;
 
-  list.innerHTML = `<div class="card">Loading...</div>`;
+  if (!list) {
+    console.log("Element #list tidak ada");
+    return;
+  }
 
   let data = JSON.parse(localStorage.getItem("news") || "[]");
 
-  setTimeout(() => {
-    if(data.length === 0){
-      list.innerHTML = `<div class="card">Belum ada berita</div>`;
-      return;
-    }
+  if (data.length === 0) {
+    list.innerHTML = `<div class="card">Belum ada berita</div>`;
+    return;
+  }
 
-    list.innerHTML = "";
+  list.innerHTML = "";
 
-    data.forEach((item, index) => {
-      list.innerHTML += `
-        <div class="card">
-          <h3>${safe(item.title)}</h3>
+  data.forEach((item, index) => {
+    list.innerHTML += `
+      <div class="card">
+        <h3>${safe(item.title)}</h3>
 
-          ${item.image ? `<img src="${item.image}" style="width:100%; border-radius:10px;">` : ""}
+        ${item.image ? `<img src="${item.image}" style="width:100%">` : ""}
 
-          <p>${safe((item.content || "").substring(0,120))}...</p>
+        <p>${safe((item.content || "").substring(0,120))}...</p>
 
-          <button class="danger" onclick="hapus(${index})">
-            Hapus
-          </button>
-        </div>
-      `;
-    });
-
-  }, 300);
+        <button class="danger" onclick="hapus(${index})">
+          Hapus
+        </button>
+      </div>
+    `;
+  });
 }
 
 /* =========================
    DELETE NEWS
 ========================= */
-function hapus(i){
+function hapus(i) {
   let data = JSON.parse(localStorage.getItem("news") || "[]");
-  data.splice(i,1);
+  data.splice(i, 1);
   localStorage.setItem("news", JSON.stringify(data));
   load();
 }
@@ -148,18 +157,19 @@ function hapus(i){
 /* =========================
    GALLERY
 ========================= */
-function uploadGallery(){
-  if(!check()) return;
+function uploadGallery() {
+  if (!check()) return;
 
   const file = document.getElementById("fileInput")?.files[0];
-  if(!file){
+
+  if (!file) {
     alert("Pilih gambar dulu!");
     return;
   }
 
   const reader = new FileReader();
 
-  reader.onload = function(e){
+  reader.onload = (e) => {
     let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
     gallery.unshift({
@@ -177,23 +187,23 @@ function uploadGallery(){
 /* =========================
    LOAD GALLERY
 ========================= */
-function loadGallery(){
+function loadGallery() {
   const box = document.getElementById("galleryList");
-  if(!box) return;
+  if (!box) return;
 
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
-  if(gallery.length === 0){
+  if (gallery.length === 0) {
     box.innerHTML = `<div class="card">Belum ada gambar</div>`;
     return;
   }
 
   box.innerHTML = "";
 
-  gallery.forEach((item,i)=>{
+  gallery.forEach((item, i) => {
     box.innerHTML += `
       <div class="card">
-        <img src="${item.img}" style="width:100%; border-radius:10px;">
+        <img src="${item.img}" style="width:100%">
         <button class="danger" onclick="deleteGallery(${i})">Hapus</button>
       </div>
     `;
@@ -203,15 +213,15 @@ function loadGallery(){
 /* =========================
    DELETE GALLERY
 ========================= */
-function deleteGallery(i){
+function deleteGallery(i) {
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-  gallery.splice(i,1);
+  gallery.splice(i, 1);
   localStorage.setItem("gallery", JSON.stringify(gallery));
   loadGallery();
 }
 
 /* =========================
-   GLOBAL EXPORT (FIX WHITE SCREEN BUG)
+   GLOBAL FIX (WAJIB)
 ========================= */
 window.login = login;
 window.publish = publish;
