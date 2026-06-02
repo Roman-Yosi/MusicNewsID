@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -88,10 +87,6 @@ nav a:hover{
   font-weight:bold;
 }
 
-.card a:hover{
-  text-decoration:underline;
-}
-
 footer{
   text-align:center;
   padding:20px;
@@ -106,7 +101,7 @@ footer{
 
 <header>
   <div class="logo">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID">
+    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
     <span>MusicNewsID</span>
   </div>
 
@@ -118,7 +113,7 @@ footer{
 
 <section class="hero">
   <h1>Berita Musik Indonesia Terbaru</h1>
-  <p>Semua artikel otomatis terhubung dari Blogger MusicNewsID</p>
+  <p>Semua artikel otomatis dari WordPress</p>
 </section>
 
 <section class="container">
@@ -134,60 +129,34 @@ footer{
 </footer>
 
 <script>
-const feedUrl =
-'https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&callback=loadPosts';
+const rssUrl = "https://romanyosi5.wordpress.com/feed/";
 
-function loadPosts(data){
+fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl))
+.then(res => res.json())
+.then(data => {
 
+  let container = document.getElementById("news-container");
   let html = "";
 
-  if(!data.feed.entry){
-    document.getElementById("news-container").innerHTML =
-      "<p>Belum ada artikel.</p>";
-    return;
-  }
-
-  data.feed.entry.forEach(post => {
-
-    let title = post.title.$t;
-
-    let link = "#";
-    post.link.forEach(item=>{
-      if(item.rel === "alternate"){
-        link = item.href;
-      }
-    });
-
-    let content = "";
-
-    if(post.summary){
-      content = post.summary.$t;
-    }else if(post.content){
-      content = post.content.$t;
-    }
-
-    content = content.replace(/<[^>]*>/g,'');
-    content = content.substring(0,200) + "...";
+  data.items.forEach(item => {
 
     html += `
       <div class="card">
-        <h3>${title}</h3>
-        <p>${content}</p>
-        <a href="${link}" target="_blank">
-          Baca Selengkapnya
-        </a>
+        <h3>${item.title}</h3>
+        <p>${item.description.replace(/<[^>]*>/g,'').substring(0,180)}...</p>
+        <a href="${item.link}" target="_blank">Baca Selengkapnya</a>
       </div>
     `;
   });
 
-  document.getElementById("news-container").innerHTML = html;
-}
+  container.innerHTML = html;
 
-const script = document.createElement("script");
-script.src = feedUrl;
-document.body.appendChild(script);
+})
+.catch(err => {
+  document.getElementById("news-container").innerHTML =
+  "<p>Gagal memuat RSS WordPress</p>";
+});
 </script>
 
 </body>
 </html>
-```
