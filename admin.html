@@ -1,80 +1,43 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin MusicNewsID</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0f172a;
-  color:#fff;
-}
-
-.container{
-  padding:15px;
-}
-
-.card{
-  background:#111827;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-}
-
-input,textarea{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border-radius:6px;
-  border:none;
-}
-
-button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  background:#22c55e;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-}
-
-.danger{
-  background:red;
-  color:#fff;
-}
-
-img{
-  width:100%;
-  margin-top:10px;
-  border-radius:8px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <div class="card">
-    <h3>Tambah Artikel</h3>
-    <input id="title" placeholder="Judul">
-    <input id="image" placeholder="URL Gambar">
-    <textarea id="content" placeholder="Isi artikel"></textarea>
-    <button onclick="publish()">Publish</button>
-  </div>
-
-  <div class="card">
-    <h3>Daftar Artikel</h3>
-    <div id="list"></div>
-  </div>
-
-</div>
-
 <script>
+let isLogin = false;
+
+/* LOGIN */
+function login(){
+  const pass = document.getElementById("pass").value;
+
+  // PASSWORD BARU
+  if(pass === "1234566"){
+    isLogin = true;
+
+    document.getElementById("loginBox").style.display = "none";
+    document.querySelector(".container").style.display = "block";
+
+    load();
+  } else {
+    alert("Password salah!");
+  }
+}
+
+/* PUBLISH */
+function publish(){
+  if(!isLogin){
+    alert("Login dulu!");
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  data.unshift({
+    id: Date.now(),
+    title: document.getElementById("title").value,
+    image: document.getElementById("image").value,
+    content: document.getElementById("content").value
+  });
+
+  localStorage.setItem("news", JSON.stringify(data));
+
+  load();
+}
 
 /* LOAD */
 function load(){
@@ -100,22 +63,6 @@ function load(){
   });
 }
 
-/* PUBLISH */
-function publish(){
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  data.unshift({
-    id: Date.now(),
-    title: document.getElementById("title").value,
-    image: document.getElementById("image").value,
-    content: document.getElementById("content").value
-  });
-
-  localStorage.setItem("news", JSON.stringify(data));
-
-  load();
-}
-
 /* DELETE */
 function hapus(i){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
@@ -123,10 +70,4 @@ function hapus(i){
   localStorage.setItem("news", JSON.stringify(data));
   load();
 }
-
-load();
-
 </script>
-
-</body>
-</html>
