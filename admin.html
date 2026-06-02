@@ -2,98 +2,168 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Admin MusicNewsID</title>
+<title>Admin Panel - MusicNewsID</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{font-family:Arial;background:#f4f4f4;margin:0;}
-header{background:#111;color:#fff;padding:15px;text-align:center;}
-.container{max-width:700px;margin:auto;padding:15px;}
-
-.card{background:#fff;padding:20px;border-radius:10px;margin-bottom:15px;}
-
-input,textarea{
-width:100%;
-padding:10px;
-margin:8px 0;
-border:1px solid #ddd;
-border-radius:5px;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: #fff;
 }
 
-button{
-width:100%;
-padding:10px;
-background:#111;
-color:#fff;
-border:none;
-cursor:pointer;
-border-radius:5px;
+header {
+  background: #111827;
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 2px solid #22c55e;
 }
 
-button:hover{background:#333;}
-
-.item{
-background:#fff;
-padding:10px;
-margin-top:10px;
-border-radius:5px;
-border-left:4px solid #111;
+.container {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: 100vh;
 }
 
-.del{
-background:red;
-margin-top:5px;
+.sidebar {
+  background: #1f2937;
+  padding: 20px;
 }
+
+.sidebar a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #111827;
+}
+
+.sidebar a:hover {
+  background: #22c55e;
+}
+
+.content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.card {
+  background: #111827;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+input, textarea, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #16a34a;
+}
+
+small {
+  color: #aaa;
+}
+
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>Admin Panel MusicNewsID</h1>
-</header>
+<header>🎵 MusicNewsID Admin Panel</header>
 
 <div class="container">
 
-<div class="card">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a href="#dashboard">Dashboard</a>
+    <a href="#upload">Upload News</a>
+    <a href="#artikel">Upload Artikel</a>
+    <a href="#gambar">Upload Gambar</a>
+    <a href="#konten">Kelola Konten</a>
+    <a href="index.html">Logout</a>
+  </div>
 
-<input id="title" placeholder="Judul artikel">
-<input id="image" placeholder="URL gambar (opsional)">
-<textarea id="content" placeholder="Isi artikel"></textarea>
+  <!-- CONTENT -->
+  <div class="content">
 
-<button onclick="publish()">Publish</button>
+    <!-- DASHBOARD -->
+    <div class="card" id="dashboard">
+      <h2>📊 Dashboard</h2>
+      <p>Selamat datang di Admin MusicNewsID</p>
+      <small>Kelola artikel & berita musik kamu di sini</small>
+    </div>
 
-</div>
+    <!-- UPLOAD ARTIKEL -->
+    <div class="card" id="artikel">
+      <h2>📝 Upload Artikel Musik</h2>
 
-<div class="card">
-<h3>📄 Artikel Tersimpan</h3>
-<div id="list"></div>
-</div>
+      <input id="title" type="text" placeholder="Judul Artikel">
+      <input id="image" type="text" placeholder="URL Gambar (opsional)">
+      <textarea id="content" rows="6" placeholder="Isi artikel..."></textarea>
+
+      <button onclick="publish()">Publish Artikel</button>
+    </div>
+
+    <!-- UPLOAD GAMBAR -->
+    <div class="card" id="gambar">
+      <h2>🖼 Upload Gambar</h2>
+
+      <input type="file" id="fileInput">
+      <button onclick="previewFile()">Upload Gambar</button>
+
+      <p id="status"></p>
+    </div>
+
+    <!-- KELOLA -->
+    <div class="card" id="konten">
+      <h2>📂 Kelola Konten</h2>
+      <div id="list"></div>
+    </div>
+
+  </div>
 
 </div>
 
 <script>
 
-// load data
+// LOAD DATA
 function load(){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   let list = document.getElementById("list");
 
   list.innerHTML = "";
 
-  data.forEach((item, index)=>{
+  data.forEach((item, index) => {
     list.innerHTML += `
-      <div class="item">
-        <b>${item.title}</b><br>
-        ${item.image ? `<img src="${item.image}" style="max-width:100%;margin-top:10px;">` : ""}
+      <div class="card">
+        <h3>${item.title}</h3>
+        ${item.image ? `<img src="${item.image}" style="width:100%;border-radius:8px;">` : ""}
         <p>${item.content.substring(0,120)}...</p>
-
-        <button class="del" onclick="hapus(${index})">Hapus</button>
+        <button style="background:red;margin-top:10px;" onclick="hapus(${index})">Hapus</button>
       </div>
     `;
   });
 }
 
-// publish
+// PUBLISH ARTIKEL
 function publish(){
 
   let title = document.getElementById("title").value;
@@ -121,14 +191,27 @@ function publish(){
   document.getElementById("content").value = "";
 
   load();
+  alert("Artikel berhasil dipublish!");
 }
 
-// delete
+// DELETE
 function hapus(index){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   data.splice(index,1);
   localStorage.setItem("news", JSON.stringify(data));
   load();
+}
+
+// PREVIEW FILE
+function previewFile(){
+  const file = document.getElementById("fileInput").files[0];
+  if(!file){
+    document.getElementById("status").innerText = "Pilih file dulu!";
+    return;
+  }
+
+  document.getElementById("status").innerText =
+  "File dipilih: " + file.name + " (belum upload ke server)";
 }
 
 load();
