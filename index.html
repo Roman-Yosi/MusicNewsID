@@ -33,13 +33,11 @@ header h1{
   font-size:20px;
 }
 
-/* NAV */
 nav a{
   color:#fff;
   margin-left:15px;
   text-decoration:none;
   font-size:14px;
-  transition:0.3s;
 }
 
 nav a:hover{
@@ -64,23 +62,6 @@ nav a:hover{
   padding:20px;
   border-radius:10px;
   margin-bottom:20px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.3);
-}
-
-.card h2{
-  margin-top:0;
-  color:#22c55e;
-}
-
-/* BUTTON LINK */
-a{
-  color:#22c55e;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-a:hover{
-  text-decoration:underline;
 }
 
 /* FOOTER */
@@ -92,6 +73,18 @@ footer{
   border-top:1px solid #22c55e;
   font-size:13px;
   color:#aaa;
+}
+
+/* NEWS LIST */
+#newsContainer .card{
+  margin-top:15px;
+  border-left:3px solid #22c55e;
+}
+
+img{
+  max-width:100%;
+  border-radius:10px;
+  margin-top:10px;
 }
 </style>
 
@@ -111,6 +104,7 @@ footer{
 
 <div class="container">
 
+<!-- STATIC CONTENT -->
 <div class="card">
 <h2>🔥 Breaking News</h2>
 <p>Musik Indonesia semakin didominasi indie pop & cinematic music dengan tren baru dari berbagai artis independen.</p>
@@ -127,11 +121,58 @@ footer{
 <a href="news.html">👉 Lihat Semua Berita</a>
 </div>
 
+<!-- SUPABASE NEWS -->
+<div id="newsContainer"></div>
+
 </div>
 
 <footer>
 © 2026 MusicNewsID • All Rights Reserved
 </footer>
+
+<!-- SUPABASE SCRIPT -->
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+
+const supabase = createClient(
+  "https://PROJECT_URL.supabase.co",
+  "sb_publishable_3FDzjw1DsNnZCn_0TXSXGA_-EE6IxdY"
+);
+
+async function loadNews(){
+
+  let container = document.getElementById("newsContainer");
+
+  let { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if(error){
+    container.innerHTML = `<div class="card">Error: ${error.message}</div>`;
+    return;
+  }
+
+  if(!data || data.length === 0){
+    container.innerHTML = `<div class="card">Belum ada berita.</div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="card"><h2>📰 Berita Terbaru</h2></div>`;
+
+  data.forEach(item => {
+    container.innerHTML += `
+      <div class="card">
+        <h3>${item.title}</h3>
+        ${item.image ? `<img src="${item.image}">` : ""}
+        <p>${item.content.substring(0,150)}...</p>
+      </div>
+    `;
+  });
+}
+
+loadNews();
+</script>
 
 </body>
 </html>
