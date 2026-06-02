@@ -1,189 +1,17 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Admin Panel - MusicNewsID</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script type="module">
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: #fff;
-}
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-/* LOGIN */
-#loginBox{
-  position:fixed;
-  inset:0;
-  background:#0f172a;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
+const supabase = createClient(
+  "https://YOUR_PROJECT_URL.supabase.co",
+  "sb_publishable_3FDzjw1DsNnZCn_0TXSXGA_-EE6IxdY"
+);
 
-#loginBox input{
-  padding:10px;
-  width:240px;
-  border:none;
-  border-radius:6px;
-}
-
-#loginBox button{
-  margin-top:10px;
-  padding:10px 20px;
-  background:#22c55e;
-  border:none;
-  color:white;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-/* HEADER */
-header {
-  background: #111827;
-  padding: 15px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  border-bottom: 2px solid #22c55e;
-}
-
-/* CONTAINER */
-.container {
-  display: none;
-  grid-template-columns: 220px 1fr;
-  height: 100vh;
-}
-
-/* SIDEBAR */
-.sidebar {
-  background: #1f2937;
-  padding: 20px;
-}
-
-.sidebar a {
-  display: block;
-  color: #fff;
-  text-decoration: none;
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 6px;
-  background: #111827;
-}
-
-.sidebar a:hover {
-  background: #22c55e;
-}
-
-/* CONTENT */
-.content {
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.card {
-  background: #111827;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-input, textarea, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: none;
-}
-
-button {
-  background: #22c55e;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:hover {
-  background: #16a34a;
-}
-
-.danger {
-  background: red !important;
-}
-
-img {
-  margin-top: 10px;
-  border-radius: 8px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<div id="loginBox">
-  <h2>🔐 Admin Login</h2>
-  <input type="password" id="pass" placeholder="Password admin">
-  <button onclick="login()">Masuk</button>
-</div>
-
-<header>🎵 MusicNewsID Admin Panel</header>
-
-<div class="container">
-
-  <div class="sidebar">
-    <a href="#dashboard">Dashboard</a>
-    <a href="#artikel">Artikel</a>
-    <a href="#gambar">Galeri</a>
-    <a href="#konten">Kelola Konten</a>
-    <a href="#" onclick="logout()">Logout</a>
-  </div>
-
-  <div class="content">
-
-    <div class="card" id="dashboard">
-      <h2>📊 Dashboard</h2>
-      <p>Selamat datang di Admin MusicNewsID</p>
-    </div>
-
-    <div class="card" id="artikel">
-      <h2>📝 Upload Artikel Musik</h2>
-
-      <input id="title" type="text" placeholder="Judul Artikel">
-      <input id="image" type="text" placeholder="URL Gambar (opsional)">
-      <textarea id="content" rows="6" placeholder="Isi artikel..."></textarea>
-
-      <button onclick="publish()">Publish Artikel</button>
-    </div>
-
-    <div class="card" id="gambar">
-      <h2>🖼 Galeri Gambar</h2>
-
-      <input type="file" id="fileInput">
-      <button onclick="uploadGallery()">Upload ke Galeri</button>
-
-      <p id="status"></p>
-      <div id="galleryList"></div>
-    </div>
-
-    <div class="card" id="konten">
-      <h2>📂 Kelola Artikel</h2>
-      <div id="list"></div>
-    </div>
-
-  </div>
-
-</div>
-
-<script>
-
+/* =========================
+   LOGIN
+========================= */
 let isLogin = false;
 
-/* LOGIN */
 function login(){
   const pass = document.getElementById("pass").value;
   const adminPass = "romanyosi123";
@@ -198,12 +26,39 @@ function login(){
   }
 }
 
-/* LOGOUT */
-function logout(){
-  location.reload();
+/* =========================
+   PUBLISH (MASIH LOCAL STORAGE)
+========================= */
+function publish(){
+  if(!check()) return;
+
+  let title = document.getElementById("title").value;
+  let image = document.getElementById("image").value;
+  let content = document.getElementById("content").value;
+
+  if(!title || !content){
+    alert("Judul & isi wajib diisi!");
+    return;
+  }
+
+  // NANTI DIUBAH KE SUPABASE
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  data.unshift({
+    id: Date.now(),
+    title,
+    image,
+    content
+  });
+
+  localStorage.setItem("news", JSON.stringify(data));
+
+  load();
 }
 
-/* CHECK LOGIN */
+/* =========================
+   CHECK LOGIN
+========================= */
 function check(){
   if(!isLogin){
     alert("Silakan login dulu!");
@@ -212,16 +67,18 @@ function check(){
   return true;
 }
 
-/* INIT */
+/* =========================
+   INIT
+========================= */
 function init(){
   load();
   loadGallery();
 }
 
-/* LOAD ARTIKEL */
+/* =========================
+   LOAD ARTIKEL
+========================= */
 function load(){
-  if(!check()) return;
-
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   let list = document.getElementById("list");
 
@@ -239,38 +96,9 @@ function load(){
   });
 }
 
-/* PUBLISH */
-function publish(){
-  if(!check()) return;
-
-  let title = document.getElementById("title").value;
-  let image = document.getElementById("image").value;
-  let content = document.getElementById("content").value;
-
-  if(!title || !content){
-    alert("Judul & isi wajib diisi!");
-    return;
-  }
-
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  data.unshift({
-    id: Date.now(),
-    title,
-    image,
-    content
-  });
-
-  localStorage.setItem("news", JSON.stringify(data));
-
-  document.getElementById("title").value = "";
-  document.getElementById("image").value = "";
-  document.getElementById("content").value = "";
-
-  load();
-}
-
-/* DELETE */
+/* =========================
+   DELETE
+========================= */
 function hapus(i){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   data.splice(i,1);
@@ -278,16 +106,13 @@ function hapus(i){
   load();
 }
 
-/* GALERI */
+/* =========================
+   GALERI (masih localStorage)
+========================= */
 function uploadGallery(){
   if(!check()) return;
 
   const file = document.getElementById("fileInput").files[0];
-
-  if(!file){
-    document.getElementById("status").innerText = "Pilih gambar dulu!";
-    return;
-  }
 
   const reader = new FileReader();
 
@@ -301,7 +126,6 @@ function uploadGallery(){
 
     localStorage.setItem("gallery", JSON.stringify(gallery));
 
-    document.getElementById("status").innerText = "Upload berhasil!";
     loadGallery();
   };
 
@@ -310,8 +134,6 @@ function uploadGallery(){
 
 /* LOAD GALERI */
 function loadGallery(){
-  if(!check()) return;
-
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
   let box = document.getElementById("galleryList");
 
@@ -336,6 +158,3 @@ function deleteGallery(i){
 }
 
 </script>
-
-</body>
-</html>
