@@ -8,25 +8,30 @@ body {
 /* HEADER */
 header {
   background: #111;
-  padding: 15px;
+  padding: 12px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #222;
 }
 
-/* LOGO FIX (TEXT + IMAGE) */
+/* LOGO FIX (NEWS STYLE PROFESSIONAL) */
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 18px;
+  gap: 8px;
+  font-size: 16px;
   font-weight: bold;
   color: #ffcc00;
 }
 
+/* LOGO IMAGE FIX (ANTI KEBESARAN) */
 .logo img {
-  height: 40px;
+  height: 28px;        /* ukuran kecil profesional */
+  max-height: 32px;
   width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 /* NAV */
@@ -34,6 +39,7 @@ nav a {
   color: white;
   margin-left: 15px;
   text-decoration: none;
+  font-size: 14px;
 }
 
 nav a:hover {
