@@ -1,158 +1,25 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Detail Artikel - MusicNewsID</title>
-<meta name="description" content="Baca artikel lengkap dari MusicNewsID">
-
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#0f172a;
-  color:#fff;
-}
-
-/* HEADER */
-header{
-  background:#111827;
-  padding:15px;
-  text-align:center;
-  border-bottom:2px solid #22c55e;
-  font-weight:bold;
-}
-
-/* CONTAINER */
-.container{
-  max-width:800px;
-  margin:auto;
-  padding:20px;
-}
-
-/* CARD */
-.card{
-  background:#111827;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.3);
-}
-
-/* IMAGE */
-img{
-  width:100%;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-/* TEXT */
-p{
-  margin-top:15px;
-  line-height:1.8;
-  color:#e5e7eb;
-}
-
-/* BUTTON */
-a{
-  display:inline-block;
-  margin-top:20px;
-  color:#000;
-  background:#22c55e;
-  padding:10px 14px;
-  border-radius:8px;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-a:hover{
-  opacity:0.85;
-}
-
-/* STATUS */
-.loading{
-  text-align:center;
-  padding:40px;
-  color:#aaa;
-}
-
-.error{
-  background:#7f1d1d;
-  padding:15px;
-  border-radius:10px;
-  color:#fff;
-}
-</style>
+  <title>Detail Berita</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-📰 MusicNewsID
+  <div class="logo">MusicNewsID</div>
 </header>
 
-<div class="container">
-  <div id="post" class="loading">Loading artikel...</div>
-</div>
+<section class="container">
+  <h1>Judul Berita</h1>
 
-<!-- SUPABASE -->
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+  <p>
+    Ini adalah isi artikel berita MusicNewsID.  
+    Kamu bisa isi dengan berita musik, artis, atau Roman Yosi.
+  </p>
 
-const supabase = createClient(
-  "https://PROJECT_URL.supabase.co",
-  "sb_publishable_3FDzjw1DsNnZCn_0TXSXGA_-EE6IxdY"
-);
-
-// ambil ID dari URL
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
-function safe(text){
-  return String(text || "")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;");
-}
-
-async function loadArticle(){
-
-  const box = document.getElementById("post");
-
-  if(!id){
-    box.innerHTML = `<div class="error">❌ ID artikel tidak ditemukan</div>`;
-    return;
-  }
-
-  let { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if(error || !data){
-    box.innerHTML = `<div class="error">❌ Artikel tidak ditemukan</div>`;
-    return;
-  }
-
-  box.innerHTML = `
-    <div class="card">
-
-      <h2>${safe(data.title || "Tanpa Judul")}</h2>
-
-      ${data.image ? `<img src="${data.image}">` : ""}
-
-      <p>
-        ${safe(data.content || "Tidak ada isi artikel")}
-      </p>
-
-      <a href="news.html">← Kembali ke Berita</a>
-
-    </div>
-  `;
-}
-
-loadArticle();
-</script>
+</section>
 
 </body>
 </html>
