@@ -37,7 +37,6 @@ body{
   background:#22c55e;
   border:none;
   border-radius:6px;
-  cursor:pointer;
 }
 
 /* HEADER */
@@ -68,6 +67,7 @@ input, textarea{
   margin-top:10px;
   border-radius:6px;
   border:none;
+  box-sizing:border-box;
 }
 
 button{
@@ -78,7 +78,6 @@ button{
   border-radius:6px;
   background:#22c55e;
   font-weight:bold;
-  cursor:pointer;
 }
 
 .danger{
@@ -108,7 +107,6 @@ img{
 
 <div class="container">
 
-  <!-- ARTIKEL -->
   <div class="card">
     <h3>Tambah Artikel</h3>
     <input id="title" placeholder="Judul">
@@ -117,13 +115,11 @@ img{
     <button onclick="publish()">Publish</button>
   </div>
 
-  <!-- LIST ARTIKEL -->
   <div class="card">
     <h3>Daftar Artikel</h3>
     <div id="list"></div>
   </div>
 
-  <!-- GALERI -->
   <div class="card">
     <h3>Galeri</h3>
     <input type="file" id="fileInput">
@@ -136,14 +132,17 @@ img{
 <script>
 let isLogin = false;
 
-/* LOGIN */
+/* LOGIN - FIX HP SAFE */
 function login(){
-  const pass = document.getElementById("pass").value;
+  const passEl = document.getElementById("pass");
+  if(!passEl) return alert("Input tidak ditemukan");
 
-  if(pass === "romanyosi123"){
+  if(passEl.value === "romanyosi123"){
     isLogin = true;
+
     document.getElementById("loginBox").style.display = "none";
     document.querySelector(".container").style.display = "block";
+
     init();
   } else {
     alert("Password salah!");
@@ -173,9 +172,9 @@ function publish(){
 
   data.unshift({
     id: Date.now(),
-    title: document.getElementById("title").value,
-    image: document.getElementById("image").value,
-    content: document.getElementById("content").value
+    title: document.getElementById("title").value || "",
+    image: document.getElementById("image").value || "",
+    content: document.getElementById("content").value || ""
   });
 
   localStorage.setItem("news", JSON.stringify(data));
@@ -185,9 +184,16 @@ function publish(){
 /* LOAD */
 function load(){
   const list = document.getElementById("list");
+  if(!list) return;
+
   let data = JSON.parse(localStorage.getItem("news") || "[]");
 
   list.innerHTML = "";
+
+  if(data.length === 0){
+    list.innerHTML = "<p>Belum ada artikel</p>";
+    return;
+  }
 
   data.forEach((item,i)=>{
     list.innerHTML += `
@@ -213,7 +219,7 @@ function hapus(i){
 function uploadGallery(){
   if(!check()) return;
 
-  const file = document.getElementById("fileInput").files[0];
+  const file = document.getElementById("fileInput")?.files[0];
   if(!file){
     alert("Pilih gambar!");
     return;
@@ -221,7 +227,7 @@ function uploadGallery(){
 
   const reader = new FileReader();
 
-  reader.onload = function(e){
+  reader.onload = (e)=>{
     let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
     gallery.unshift({
@@ -239,9 +245,16 @@ function uploadGallery(){
 /* LOAD GALLERY */
 function loadGallery(){
   const box = document.getElementById("galleryList");
+  if(!box) return;
+
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
   box.innerHTML = "";
+
+  if(gallery.length === 0){
+    box.innerHTML = "<p>Belum ada gambar</p>";
+    return;
+  }
 
   gallery.forEach((item,i)=>{
     box.innerHTML += `
