@@ -1,46 +1,42 @@
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-/* =========================
-   SUPABASE (FIX URL)
-========================= */
-const supabase = createClient(
-  "https://YOUR_PROJECT_URL.supabase.co",
-  "sb_publishable_3FDzjw1DsNnZCn_0TXSXGA_-EE6IxdY"
-);
-
+<script>
 /* =========================
    STATE
 ========================= */
 let isLogin = false;
 
 /* =========================
-   SAFETY: CEGAH BLANK SCREEN
+   SAFE INIT
 ========================= */
-window.addEventListener("error", (e) => {
-  console.log("JS ERROR:", e.message);
-});
-
 window.addEventListener("DOMContentLoaded", () => {
   console.log("Admin loaded OK");
+
+  const list = document.getElementById("list");
+  if (list) load();
+
+  const gallery = document.getElementById("galleryList");
+  if (gallery) loadGallery();
 });
 
 /* =========================
    LOGIN
 ========================= */
 function login() {
-  const pass = document.getElementById("pass")?.value;
+  const passEl = document.getElementById("pass");
+  const pass = passEl ? passEl.value : "";
 
   if (!pass) {
-    alert("Isi password dulu!");
+    alert("Isi password!");
     return;
   }
 
   if (pass === "romanyosi123") {
     isLogin = true;
 
-    document.getElementById("loginBox").style.display = "none";
-    document.querySelector(".container").style.display = "grid";
+    const loginBox = document.getElementById("loginBox");
+    const container = document.querySelector(".container");
+
+    if (loginBox) loginBox.style.display = "none";
+    if (container) container.style.display = "grid";
 
     init();
   } else {
@@ -53,7 +49,7 @@ function login() {
 ========================= */
 function check() {
   if (!isLogin) {
-    alert("Silakan login dulu!");
+    alert("Login dulu!");
     return false;
   }
   return true;
@@ -68,23 +64,14 @@ function init() {
 }
 
 /* =========================
-   SAFE TEXT
-========================= */
-function safe(t) {
-  return String(t || "")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-}
-
-/* =========================
-   PUBLISH (LOCAL STORAGE)
+   PUBLISH NEWS
 ========================= */
 function publish() {
   if (!check()) return;
 
-  const title = document.getElementById("title")?.value;
-  const image = document.getElementById("image")?.value;
-  const content = document.getElementById("content")?.value;
+  const title = document.getElementById("title")?.value || "";
+  const image = document.getElementById("image")?.value || "";
+  const content = document.getElementById("content")?.value || "";
 
   if (!title || !content) {
     alert("Judul & isi wajib diisi!");
@@ -103,20 +90,15 @@ function publish() {
   localStorage.setItem("news", JSON.stringify(data));
 
   load();
-
-  alert("Berhasil dipublish!");
+  alert("Berhasil publish!");
 }
 
 /* =========================
-   LOAD NEWS (ANTI BLANK)
+   LOAD NEWS
 ========================= */
 function load() {
   const list = document.getElementById("list");
-
-  if (!list) {
-    console.log("Element #list tidak ada");
-    return;
-  }
+  if (!list) return;
 
   let data = JSON.parse(localStorage.getItem("news") || "[]");
 
@@ -127,18 +109,13 @@ function load() {
 
   list.innerHTML = "";
 
-  data.forEach((item, index) => {
+  data.forEach((item, i) => {
     list.innerHTML += `
       <div class="card">
-        <h3>${safe(item.title)}</h3>
-
+        <h3>${item.title}</h3>
         ${item.image ? `<img src="${item.image}" style="width:100%">` : ""}
-
-        <p>${safe((item.content || "").substring(0,120))}...</p>
-
-        <button class="danger" onclick="hapus(${index})">
-          Hapus
-        </button>
+        <p>${(item.content || "").substring(0,120)}...</p>
+        <button class="danger" onclick="hapus(${i})">Hapus</button>
       </div>
     `;
   });
@@ -163,7 +140,7 @@ function uploadGallery() {
   const file = document.getElementById("fileInput")?.files[0];
 
   if (!file) {
-    alert("Pilih gambar dulu!");
+    alert("Pilih gambar!");
     return;
   }
 
@@ -178,6 +155,7 @@ function uploadGallery() {
     });
 
     localStorage.setItem("gallery", JSON.stringify(gallery));
+
     loadGallery();
   };
 
@@ -228,5 +206,4 @@ window.publish = publish;
 window.hapus = hapus;
 window.uploadGallery = uploadGallery;
 window.deleteGallery = deleteGallery;
-
 </script>
