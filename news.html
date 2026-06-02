@@ -3,77 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>News - MusicNewsID</title>
+  <title>Admin MusicNewsID</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-  <div class="logo">MusicNewsID</div>
-
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="news.html">News</a>
-    <a href="admin.html">Admin</a>
-  </nav>
+  <div class="logo">MusicNewsID Admin</div>
 </header>
 
-<section class="container">
+<section class="container" id="loginBox">
 
-  <h1>📰 Berita Roman Yosi</h1>
+  <h2>🔒 Login Admin</h2>
 
-  <!-- ARTIKEL DEFAULT -->
-  <div class="card">
-    <h3>Roman Yosi Rilis Lagu Baru</h3>
-    <p>Musisi indie Roman Yosi kembali dengan karya terbaru di tahun ini.</p>
-    <a href="news-detail.html?id=default1">Baca Selengkapnya</a>
-  </div>
+  <input type="password" id="pass" placeholder="Masukkan password">
+  <br><br>
 
-  <div class="card">
-    <h3>Perjalanan Musik Roman Yosi</h3>
-    <p>Perjalanan karier dan perkembangan musik Roman Yosi di industri musik.</p>
-    <a href="news-detail.html?id=default2">Baca Selengkapnya</a>
-  </div>
+  <button onclick="login()">Masuk</button>
 
-  <!-- ARTIKEL DARI ADMIN -->
-  <h2>🔥 Artikel Terbaru</h2>
-  <div id="newsList"></div>
+</section>
+
+<section class="container" id="adminPanel" style="display:none;">
+
+  <h2>📝 Tambah Berita</h2>
+
+  <input id="title" placeholder="Judul berita"><br><br>
+  <textarea id="content" placeholder="Isi berita"></textarea><br><br>
+
+  <button onclick="saveNews()">Simpan</button>
+
+  <h3>📌 Preview</h3>
+  <div id="list"></div>
 
 </section>
 
 <script>
+
+const PASSWORD = "#12345666"; // PASSWORD KAMU
+
+function login() {
+  let pass = document.getElementById("pass").value;
+
+  if (pass === PASSWORD) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+    loadNews();
+  } else {
+    alert("Password salah!");
+  }
+}
+
+function saveNews() {
+  let title = document.getElementById("title").value.trim();
+  let content = document.getElementById("content").value.trim();
+
+  if (!title || !content) {
+    alert("Isi tidak boleh kosong!");
+    return;
+  }
+
+  let news = JSON.parse(localStorage.getItem("news") || "[]");
+
+  news.unshift({title, content});
+  localStorage.setItem("news", JSON.stringify(news));
+
+  loadNews();
+
+  document.getElementById("title").value = "";
+  document.getElementById("content").value = "";
+}
+
 function loadNews() {
   let news = JSON.parse(localStorage.getItem("news") || "[]");
-  let container = document.getElementById("newsList");
 
   let html = "";
 
-  if (news.length === 0) {
-    html = "<p>Belum ada artikel dari admin.</p>";
-  }
-
-  news.forEach((n, index) => {
+  news.forEach(n => {
     html += `
       <div class="card">
-        <h3>${escapeHTML(n.title)}</h3>
-        <p>${escapeHTML(n.content.substring(0, 120))}...</p>
-        <a href="news-detail.html?id=${index}">Baca Selengkapnya</a>
+        <h3>${n.title}</h3>
+        <p>${n.content}</p>
       </div>
     `;
   });
 
-  container.innerHTML = html;
+  document.getElementById("list").innerHTML = html;
 }
 
-function escapeHTML(text) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-}
-
-loadNews();
 </script>
 
 </body>
