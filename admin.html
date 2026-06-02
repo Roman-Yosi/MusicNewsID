@@ -1,20 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin MusicNewsID</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f172a;
+  color:#fff;
+}
+
+/* LOGIN */
+#loginBox{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#0f172a;
+  z-index:999;
+}
+
+#loginBox input{
+  padding:10px;
+  width:250px;
+  border:none;
+  border-radius:6px;
+}
+
+#loginBox button{
+  margin-top:10px;
+  padding:10px;
+  width:250px;
+  background:#22c55e;
+  border:none;
+  border-radius:6px;
+}
+
+/* ADMIN */
+.container{
+  display:none;
+  padding:15px;
+}
+
+.card{
+  background:#111827;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+}
+
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border:none;
+  border-radius:6px;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:#22c55e;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+}
+
+.danger{
+  background:red;
+  color:#fff;
+}
+
+img{
+  width:100%;
+  margin-top:10px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2>🔐 Admin Login</h2>
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Masuk</button>
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel" class="container">
+
+  <div class="card">
+    <h3>Tambah Artikel</h3>
+    <input id="title" placeholder="Judul">
+    <input id="image" placeholder="URL Gambar">
+    <textarea id="content" placeholder="Isi artikel"></textarea>
+    <button onclick="publish()">Publish</button>
+  </div>
+
+  <div class="card">
+    <h3>Daftar Artikel</h3>
+    <div id="list"></div>
+  </div>
+
+</div>
+
 <script>
 let isLogin = false;
 
-/* LOGIN */
+/* LOGIN SAFE */
 function login(){
-  const pass = document.getElementById("pass").value;
+  try{
+    const pass = document.getElementById("pass").value;
 
-  // PASSWORD BARU
-  if(pass === "1234566"){
-    isLogin = true;
+    if(pass === "1234566"){
+      isLogin = true;
 
-    document.getElementById("loginBox").style.display = "none";
-    document.querySelector(".container").style.display = "block";
+      document.getElementById("loginBox").style.display = "none";
 
-    load();
-  } else {
-    alert("Password salah!");
+      const panel = document.getElementById("adminPanel");
+      if(panel) panel.style.display = "block";
+
+      load();
+    } else {
+      alert("Password salah!");
+    }
+  } catch(e){
+    alert("Error login");
+    console.log(e);
   }
 }
 
@@ -35,13 +155,14 @@ function publish(){
   });
 
   localStorage.setItem("news", JSON.stringify(data));
-
   load();
 }
 
-/* LOAD */
+/* LOAD SAFE */
 function load(){
   const list = document.getElementById("list");
+  if(!list) return;
+
   let data = JSON.parse(localStorage.getItem("news") || "[]");
 
   list.innerHTML = "";
@@ -54,9 +175,9 @@ function load(){
   data.forEach((item,i)=>{
     list.innerHTML += `
       <div class="card">
-        <h4>${item.title}</h4>
+        <h4>${item.title || ""}</h4>
         ${item.image ? `<img src="${item.image}">` : ""}
-        <p>${(item.content || "").substring(0,120)}...</p>
+        <p>${(item.content || "").substring(0,120)}</p>
         <button class="danger" onclick="hapus(${i})">Hapus</button>
       </div>
     `;
@@ -70,4 +191,12 @@ function hapus(i){
   localStorage.setItem("news", JSON.stringify(data));
   load();
 }
+
+/* AUTO SAFE START */
+window.onload = function(){
+  console.log("Admin loaded OK");
+};
 </script>
+
+</body>
+</html>
