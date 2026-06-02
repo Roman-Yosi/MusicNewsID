@@ -3,23 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MusicNewsID</title>
-<link rel="stylesheet" href="style.css">
+
+<title>MusicNewsID - Portal Berita Musik Indonesia</title>
+<meta name="description" content="MusicNewsID adalah portal berita musik, update artis, rilis lagu, dan tren musik Indonesia terbaru.">
 
 <style>
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px;
-  background:#111;
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f172a;
   color:#fff;
 }
 
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 25px;
+  background:#111827;
+  border-bottom:2px solid #22c55e;
+}
+
+header h1{
+  margin:0;
+  font-size:20px;
+}
+
+/* NAV */
 nav a{
   color:#fff;
   margin-left:15px;
   text-decoration:none;
+  font-size:14px;
+  transition:0.3s;
 }
 
 nav a:hover{
@@ -30,43 +50,88 @@ nav a:hover{
   color:#22c55e;
   font-weight:bold;
 }
+
+/* CONTAINER */
+.container{
+  max-width:1000px;
+  margin:30px auto;
+  padding:0 15px;
+}
+
+/* CARD */
+.card{
+  background:#111827;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.3);
+}
+
+.card h2{
+  margin-top:0;
+  color:#22c55e;
+}
+
+/* BUTTON LINK */
+a{
+  color:#22c55e;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+a:hover{
+  text-decoration:underline;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:20px;
+  background:#111827;
+  margin-top:40px;
+  border-top:1px solid #22c55e;
+  font-size:13px;
+  color:#aaa;
+}
 </style>
 
 </head>
+
 <body>
 
 <header>
-<h1>MusicNewsID</h1>
+<h1>🎵 MusicNewsID</h1>
 
 <nav>
 <a href="index.html">Home</a>
 <a href="news.html">Berita</a>
 <a href="admin.html" class="admin">Admin</a>
 </nav>
-
 </header>
 
 <div class="container">
 
 <div class="card">
-<h2>🔥 BREAKING</h2>
-<p>Musik Indonesia semakin didominasi indie pop & cinematic music</p>
+<h2>🔥 Breaking News</h2>
+<p>Musik Indonesia semakin didominasi indie pop & cinematic music dengan tren baru dari berbagai artis independen.</p>
 </div>
 
 <div class="card">
-<h2>⭐ Featured</h2>
-<p>Roman Yosi menghadirkan karya cinematic pop terbaru.</p>
+<h2>⭐ Featured Artist</h2>
+<p><b>Roman Yosi</b> menghadirkan karya cinematic pop terbaru dengan nuansa emosional dan storytelling kuat.</p>
 </div>
 
 <div class="card">
-<h2>HOT</h2>
-<p>Roman Yosi Rilis Single Cinematic Baru</p>
-<a href="news.html">Lihat Berita</a>
+<h2>🎧 Latest Update</h2>
+<p>Single terbaru Roman Yosi mulai masuk platform streaming dan menarik perhatian pendengar musik indie.</p>
+<a href="news.html">👉 Lihat Semua Berita</a>
 </div>
 
 </div>
 
-<footer>© 2026 MusicNewsID</footer>
+<footer>
+© 2026 MusicNewsID • All Rights Reserved
+</footer>
 
 </body>
 </html>
