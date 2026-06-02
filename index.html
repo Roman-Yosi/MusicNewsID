@@ -1,218 +1,50 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MusicNewsID - Portal Berita Musik Indonesia</title>
-<meta name="description" content="MusicNewsID adalah portal berita musik, update artis, rilis lagu, dan tren musik Indonesia terbaru.">
-
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#0f172a;
-  color:#fff;
-}
-
-/* HEADER */
-header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 25px;
-  background:#111827;
-  border-bottom:2px solid #22c55e;
-}
-
-header h1{
-  margin:0;
-  font-size:20px;
-}
-
-nav a{
-  color:#fff;
-  margin-left:15px;
-  text-decoration:none;
-  font-size:14px;
-}
-
-nav a:hover{
-  color:#22c55e;
-}
-
-.admin{
-  color:#22c55e;
-  font-weight:bold;
-}
-
-/* CONTAINER */
-.container{
-  max-width:1000px;
-  margin:30px auto;
-  padding:0 15px;
-}
-
-/* CARD */
-.card{
-  background:#111827;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:20px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.25);
-}
-
-/* NEWS CARD */
-.news-card{
-  border-left:3px solid #22c55e;
-}
-
-/* IMAGE */
-img{
-  width:100%;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-/* LINK */
-a{
-  color:#22c55e;
-  text-decoration:none;
-  font-weight:bold;
-  display:inline-block;
-  margin-top:10px;
-}
-
-a:hover{
-  text-decoration:underline;
-}
-
-/* FOOTER */
-footer{
-  text-align:center;
-  padding:20px;
-  background:#111827;
-  margin-top:40px;
-  border-top:1px solid #22c55e;
-  font-size:13px;
-  color:#aaa;
-}
-
-/* LOADING */
-.loading{
-  text-align:center;
-  padding:20px;
-  color:#aaa;
-}
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MusicNewsID - Berita Musik Indonesia</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-<h1>🎵 MusicNewsID</h1>
-
-<nav>
-<a href="index.html">Home</a>
-<a href="news.html">Berita</a>
-<a href="admin.html" class="admin">Admin</a>
-</nav>
+  <div class="logo">🎵 MusicNewsID</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="news.html">News</a>
+    <a href="post.html">Post</a>
+    <a href="admin.html">Admin</a>
+  </nav>
 </header>
 
-<div class="container">
+<section class="hero">
+  <h1>Berita Musik Indonesia Terbaru</h1>
+  <p>Update artis, lagu, dan industri musik setiap hari</p>
+</section>
 
-<!-- STATIC CONTENT -->
-<div class="card">
-<h2>🔥 Breaking News</h2>
-<p>Musik Indonesia semakin didominasi indie pop & cinematic music dengan tren baru dari berbagai artis independen.</p>
-</div>
+<section class="container">
 
-<div class="card">
-<h2>⭐ Featured Artist</h2>
-<p><b>Roman Yosi</b> menghadirkan karya cinematic pop terbaru dengan nuansa emosional dan storytelling kuat.</p>
-</div>
+  <h2>🔥 Berita Terbaru</h2>
 
-<div class="card">
-<h2>🎧 Latest Update</h2>
-<p>Single terbaru Roman Yosi mulai masuk platform streaming dan menarik perhatian pendengar musik indie.</p>
-<a href="news.html">👉 Lihat Semua Berita</a>
-</div>
+  <div class="card">
+    <h3>Roman Yosi Rilis Lagu Baru</h3>
+    <p>Musisi indie Roman Yosi kembali dengan karya terbaru...</p>
+    <a href="news-detail.html">Baca Selengkapnya</a>
+  </div>
 
-<!-- SUPABASE NEWS -->
-<div id="newsContainer">
-  <div class="loading">Loading berita...</div>
-</div>
+  <div class="card">
+    <h3>Tren Musik 2026</h3>
+    <p>Genre musik yang sedang naik daun di tahun ini...</p>
+    <a href="news-detail.html">Baca Selengkapnya</a>
+  </div>
 
-</div>
+</section>
 
 <footer>
-© 2026 MusicNewsID • All Rights Reserved
+  <p>© 2026 MusicNewsID - All Rights Reserved</p>
 </footer>
-
-<!-- SUPABASE SCRIPT -->
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-
-const supabase = createClient(
-  "https://PROJECT_URL.supabase.co",
-  "sb_publishable_3FDzjw1DsNnZCn_0TXSXGA_-EE6IxdY"
-);
-
-function escapeHTML(str){
-  return String(str)
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;");
-}
-
-async function loadNews(){
-
-  const container = document.getElementById("newsContainer");
-
-  let { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if(error){
-    container.innerHTML = `<div class="card">❌ Error: ${error.message}</div>`;
-    return;
-  }
-
-  if(!data || data.length === 0){
-    container.innerHTML = `<div class="card">Belum ada berita.</div>`;
-    return;
-  }
-
-  container.innerHTML = `<div class="card"><h2>📰 Berita Terbaru</h2></div>`;
-
-  data.forEach(item => {
-
-    container.innerHTML += `
-      <div class="card news-card">
-
-        <h3>${escapeHTML(item.title || "Tanpa Judul")}</h3>
-
-        ${item.image ? `<img src="${item.image}">` : ""}
-
-        <p>
-          ${escapeHTML(item.content ? item.content.substring(0,150) : "Tidak ada isi")}...
-        </p>
-
-        <a href="news-detail.html?id=${item.id}">
-          Baca Selengkapnya →
-        </a>
-
-      </div>
-    `;
-  });
-}
-
-loadNews();
-</script>
 
 </body>
 </html>
