@@ -2,30 +2,47 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Berita MusicNewsID</title>
-<link rel="stylesheet" href="style.css">
+<title>Berita</title>
+<style>
+body{font-family:Arial;background:#f4f4f4;margin:0;}
+header{background:#111;color:#fff;padding:15px;text-align:center;}
+.container{max-width:700px;margin:auto;padding:15px;}
+.card{background:#fff;padding:15px;margin-bottom:10px;border-radius:10px;}
+a{display:inline-block;margin-top:10px;background:#111;color:#fff;padding:8px 12px;text-decoration:none;}
+</style>
 </head>
 <body>
 
 <header>
-<h1>Berita</h1>
+<h1>Berita MusicNewsID</h1>
 </header>
 
-<div class="container">
+<div class="container" id="list"></div>
 
-<div class="card">
-<h3>Roman Yosi Rilis Single Cinematic Baru</h3>
-<p>Karya musik emosional dan sinematik modern.</p>
-<a href="post.html?id=1">Baca</a>
-</div>
+<script>
+let data = JSON.parse(localStorage.getItem("news") || "[]");
 
-<div class="card">
-<h3>Indie Pop Semakin Viral</h3>
-<p>Genre indie semakin mendominasi streaming.</p>
-<a href="post.html?id=2">Baca</a>
-</div>
+let list = document.getElementById("list");
 
-</div>
+if(data.length === 0){
+  list.innerHTML = "<p>Belum ada berita</p>";
+}
+
+data.forEach(item => {
+
+  let div = document.createElement("div");
+  div.className = "card";
+
+  div.innerHTML = `
+    <h3>${item.title}</h3>
+    <p>${item.content.substring(0,100)}...</p>
+    <a href="post.html?id=${item.id}">Baca</a>
+  `;
+
+  list.appendChild(div);
+
+});
+</script>
 
 </body>
 </html>
