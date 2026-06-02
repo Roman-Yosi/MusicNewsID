@@ -1,34 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - MusicNewsID</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f172a;
+  color:#fff;
+}
+
+/* LOGIN */
+#loginBox{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#0f172a;
+}
+
+#loginBox input{
+  padding:10px;
+  width:250px;
+  border:none;
+  border-radius:6px;
+}
+
+#loginBox button{
+  margin-top:10px;
+  padding:10px 20px;
+  background:#22c55e;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* HEADER */
+header{
+  padding:15px;
+  text-align:center;
+  background:#111827;
+  border-bottom:2px solid #22c55e;
+}
+
+/* CONTAINER */
+.container{
+  display:none;
+  padding:15px;
+}
+
+/* CARD */
+.card{
+  background:#111827;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+}
+
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:6px;
+  border:none;
+}
+
+button{
+  margin-top:10px;
+  padding:10px;
+  width:100%;
+  border:none;
+  border-radius:6px;
+  background:#22c55e;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.danger{
+  background:red;
+}
+
+img{
+  width:100%;
+  margin-top:10px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2>🔐 Admin Login</h2>
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Masuk</button>
+</div>
+
+<header>
+<h2>🎵 MusicNewsID Admin</h2>
+</header>
+
+<div class="container">
+
+  <!-- ARTIKEL -->
+  <div class="card">
+    <h3>Tambah Artikel</h3>
+    <input id="title" placeholder="Judul">
+    <input id="image" placeholder="URL Gambar">
+    <textarea id="content" placeholder="Isi artikel"></textarea>
+    <button onclick="publish()">Publish</button>
+  </div>
+
+  <!-- LIST ARTIKEL -->
+  <div class="card">
+    <h3>Daftar Artikel</h3>
+    <div id="list"></div>
+  </div>
+
+  <!-- GALERI -->
+  <div class="card">
+    <h3>Galeri</h3>
+    <input type="file" id="fileInput">
+    <button onclick="uploadGallery()">Upload</button>
+    <div id="galleryList"></div>
+  </div>
+
+</div>
+
 <script>
 let isLogin = false;
 
 /* LOGIN */
 function login(){
-  try {
-    const pass = document.getElementById("pass").value;
+  const pass = document.getElementById("pass").value;
 
-    if(pass === "romanyosi123"){
-      isLogin = true;
-
-      document.getElementById("loginBox").style.display = "none";
-      document.querySelector(".container").style.display = "grid";
-
-      init();
-    } else {
-      alert("Password salah!");
-    }
-  } catch(e){
-    console.log(e);
-    alert("Login error");
+  if(pass === "romanyosi123"){
+    isLogin = true;
+    document.getElementById("loginBox").style.display = "none";
+    document.querySelector(".container").style.display = "block";
+    init();
+  } else {
+    alert("Password salah!");
   }
-}
-
-/* CHECK */
-function check(){
-  if(!isLogin){
-    alert("Silakan login dulu!");
-    return false;
-  }
-  return true;
 }
 
 /* INIT */
@@ -37,30 +156,13 @@ function init(){
   loadGallery();
 }
 
-/* LOAD NEWS */
-function load(){
-  try {
-    const list = document.getElementById("list");
-    if(!list) return;
-
-    let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-    list.innerHTML = "";
-
-    data.forEach((item, index) => {
-      list.innerHTML += `
-        <div class="card">
-          <h3>${item.title || ""}</h3>
-          ${item.image ? `<img src="${item.image}" style="width:100%">` : ""}
-          <p>${(item.content || "").substring(0,120)}</p>
-          <button onclick="hapus(${index})">Hapus</button>
-        </div>
-      `;
-    });
-
-  } catch(e){
-    console.log("LOAD ERROR", e);
+/* CHECK */
+function check(){
+  if(!isLogin){
+    alert("Login dulu!");
+    return false;
   }
+  return true;
 }
 
 /* PUBLISH */
@@ -77,8 +179,26 @@ function publish(){
   });
 
   localStorage.setItem("news", JSON.stringify(data));
-
   load();
+}
+
+/* LOAD */
+function load(){
+  const list = document.getElementById("list");
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  list.innerHTML = "";
+
+  data.forEach((item,i)=>{
+    list.innerHTML += `
+      <div class="card">
+        <h4>${item.title}</h4>
+        ${item.image ? `<img src="${item.image}">` : ""}
+        <p>${(item.content || "").substring(0,120)}...</p>
+        <button class="danger" onclick="hapus(${i})">Hapus</button>
+      </div>
+    `;
+  });
 }
 
 /* DELETE */
@@ -119,8 +239,6 @@ function uploadGallery(){
 /* LOAD GALLERY */
 function loadGallery(){
   const box = document.getElementById("galleryList");
-  if(!box) return;
-
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
   box.innerHTML = "";
@@ -128,25 +246,21 @@ function loadGallery(){
   gallery.forEach((item,i)=>{
     box.innerHTML += `
       <div class="card">
-        <img src="${item.img}" style="width:100%">
-        <button onclick="deleteGallery(${i})">Hapus</button>
+        <img src="${item.img}">
+        <button class="danger" onclick="deleteGallery(${i})">Hapus</button>
       </div>
     `;
   });
 }
 
-/* DELETE */
+/* DELETE GALLERY */
 function deleteGallery(i){
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
   gallery.splice(i,1);
   localStorage.setItem("gallery", JSON.stringify(gallery));
   loadGallery();
 }
-
-/* GLOBAL */
-window.login = login;
-window.publish = publish;
-window.hapus = hapus;
-window.uploadGallery = uploadGallery;
-window.deleteGallery = deleteGallery;
 </script>
+
+</body>
+</html>
