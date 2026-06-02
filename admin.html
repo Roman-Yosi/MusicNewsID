@@ -2,40 +2,80 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin MusicNewsID</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: #1c1c1c;
+      border: 1px solid #333;
+      color: white;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background: #ffcc00;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
   <div class="logo">MusicNewsID Admin</div>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="news.html">News</a>
+    <a href="admin.html">Admin</a>
+  </nav>
 </header>
 
 <section class="container">
 
-  <h2>Tambah Berita</h2>
+  <h2>📝 Tambah Berita</h2>
 
-  <input id="title" placeholder="Judul berita"><br><br>
-  <textarea id="content" placeholder="Isi berita"></textarea><br><br>
+  <input id="title" placeholder="Judul berita">
+  <textarea id="content" rows="6" placeholder="Isi berita"></textarea>
 
   <button onclick="saveNews()">Simpan</button>
+  <button onclick="clearForm()">Reset</button>
+  <button onclick="clearAll()">Hapus Semua</button>
 
-  <h3>Preview</h3>
+  <h3>📌 Preview</h3>
   <div id="list"></div>
 
 </section>
 
 <script>
 function saveNews() {
-  let title = document.getElementById("title").value;
-  let content = document.getElementById("content").value;
+  let title = document.getElementById("title").value.trim();
+  let content = document.getElementById("content").value.trim();
+
+  if (!title || !content) {
+    alert("Judul dan isi tidak boleh kosong!");
+    return;
+  }
 
   let news = JSON.parse(localStorage.getItem("news") || "[]");
 
-  news.push({title, content});
+  news.unshift({title, content});
   localStorage.setItem("news", JSON.stringify(news));
 
+  clearForm();
   loadNews();
 }
 
@@ -43,11 +83,41 @@ function loadNews() {
   let news = JSON.parse(localStorage.getItem("news") || "[]");
 
   let html = "";
+
+  if (news.length === 0) {
+    html = "<p>Belum ada berita.</p>";
+  }
+
   news.forEach(n => {
-    html += `<div class="card"><h3>${n.title}</h3><p>${n.content}</p></div>`;
+    html += `
+      <div class="card">
+        <h3>${escapeHTML(n.title)}</h3>
+        <p>${escapeHTML(n.content)}</p>
+      </div>
+    `;
   });
 
   document.getElementById("list").innerHTML = html;
+}
+
+function clearForm() {
+  document.getElementById("title").value = "";
+  document.getElementById("content").value = "";
+}
+
+function clearAll() {
+  if (confirm("Hapus semua berita?")) {
+    localStorage.removeItem("news");
+    loadNews();
+  }
+}
+
+// anti rusak HTML
+function escapeHTML(text) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 loadNews();
