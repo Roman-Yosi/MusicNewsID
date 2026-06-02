@@ -81,7 +81,7 @@ img{
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 
 <script>
-// FIREBASE CONFIG
+
 const firebaseConfig = {
   apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
   authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
@@ -96,46 +96,59 @@ const db = firebase.firestore();
 
 const container = document.getElementById("content");
 
-// AMBIL ID DARI URL
+// AMBIL ID
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-// JIKA TIDAK ADA ID
+// DEBUG (penting)
+console.log("ARTICLE ID:", id);
+
+// JIKA ID KOSONG
 if(!id){
-  container.innerHTML = "<div class='status'>❌ Artikel tidak ditemukan (ID kosong)</div>";
+  container.innerHTML = `
+    <div class="status">
+      ❌ Artikel tidak ditemukan<br>
+      <small>ID kosong</small>
+    </div>
+  `;
 } else {
 
   db.collection("musicnews_articles").doc(id).get()
-    .then((doc) => {
+  .then((doc) => {
 
-      if(!doc.exists){
-        container.innerHTML = "<div class='status'>❌ Artikel tidak ditemukan</div>";
-        return;
-      }
-
-      const data = doc.data();
-
-      let date = "";
-      if(data.createdAt){
-        date = typeof data.createdAt === "string"
-          ? data.createdAt
-          : "Baru saja";
-      }
-
+    if(!doc.exists){
       container.innerHTML = `
-        <div class="card">
-          ${data.image ? `<img src="${data.image}">` : ""}
-          <div class="title">${data.title || "Tanpa Judul"}</div>
-          <div class="date">${date}</div>
-          <div class="content">${data.content || ""}</div>
+        <div class="status">
+          ❌ Artikel tidak ditemukan<br>
+          <small>ID: ${id}</small>
         </div>
       `;
-    })
-    .catch((error) => {
-      container.innerHTML = "<div class='status'>❌ Error: " + error.message + "</div>";
-    });
+      return;
+    }
+
+    const data = doc.data();
+
+    container.innerHTML = `
+      <div class="card">
+        ${data.image ? `<img src="${data.image}">` : ""}
+        <div class="title">${data.title || "Tanpa Judul"}</div>
+        <div class="date">
+          ${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : ""}
+        </div>
+        <div class="content">${data.content || ""}</div>
+      </div>
+    `;
+  })
+  .catch((error) => {
+    container.innerHTML = `
+      <div class="status">
+        ❌ Error Firebase: ${error.message}
+      </div>
+    `;
+  });
 
 }
+
 </script>
 
 </body>
