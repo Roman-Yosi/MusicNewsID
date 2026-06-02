@@ -1,110 +1,193 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MusicNewsID - Berita Musik Indonesia</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MusicNewsID - Berita Musik Indonesia</title>
+<link rel="stylesheet" href="style.css">
 
-  <style>
-    /* HEADER */
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: bold;
-      font-size: 18px;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0f0f0f;
+  color:#fff;
+}
 
-    .logo img {
-      height: 38px;
-      width: auto;
-      object-fit: contain;
-    }
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:#111;
+}
 
-    nav a {
-      margin-left: 12px;
-      text-decoration: none;
-      color: white;
-      font-weight: 500;
-    }
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:bold;
+  font-size:20px;
+}
 
-    nav a:hover {
-      color: #ffcc00;
-    }
+.logo img{
+  height:40px;
+}
 
-    /* HERO */
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-      background: linear-gradient(45deg, #111, #222);
-    }
+nav a{
+  color:white;
+  text-decoration:none;
+  margin-left:15px;
+  font-weight:500;
+}
 
-    .hero h1 {
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
+nav a:hover{
+  color:#ffcc00;
+}
 
-    .hero p {
-      color: #ccc;
-    }
+.hero{
+  text-align:center;
+  padding:70px 20px;
+  background:linear-gradient(45deg,#111,#222);
+}
 
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: #111;
-      margin-top: 40px;
-      color: #aaa;
-    }
-  </style>
+.hero h1{
+  margin:0;
+  font-size:34px;
+}
+
+.hero p{
+  color:#ccc;
+}
+
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+.card h3{
+  margin-top:0;
+}
+
+.card p{
+  color:#ccc;
+}
+
+.card a{
+  color:#ffcc00;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.card a:hover{
+  text-decoration:underline;
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  background:#111;
+  color:#aaa;
+  margin-top:40px;
+}
+</style>
 </head>
 
 <body>
 
 <header>
   <div class="logo">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID Logo">
+    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID">
     <span>MusicNewsID</span>
   </div>
 
-  <!-- MENU (ADMIN SUDAH DIHAPUS) -->
   <nav>
     <a href="index.html">Home</a>
-    <a href="news.html">News</a>
-    <a href="post.html">Post</a>
+    <a href="https://musicnewsid.blogspot.com/" target="_blank">Admin Blogger</a>
   </nav>
 </header>
 
-<!-- HERO SECTION -->
 <section class="hero">
   <h1>Berita Musik Indonesia Terbaru</h1>
-  <p>Update artis, lagu, dan industri musik setiap hari</p>
+  <p>Semua artikel otomatis terhubung dari Blogger MusicNewsID</p>
 </section>
 
-<!-- CONTENT -->
 <section class="container">
-
   <h2>🔥 Berita Terbaru</h2>
 
-  <div class="card">
-    <h3>Roman Yosi Rilis Lagu Baru</h3>
-    <p>Musisi indie Roman Yosi kembali dengan karya terbaru yang membawa warna baru di industri musik Indonesia...</p>
-    <a href="news-detail.html?id=1">Baca Selengkapnya</a>
+  <div id="news-container">
+    <p>Memuat artikel...</p>
   </div>
-
-  <div class="card">
-    <h3>Tren Musik 2026</h3>
-    <p>Genre musik yang sedang naik daun di tahun 2026 semakin beragam dan kreatif...</p>
-    <a href="news-detail.html?id=2">Baca Selengkapnya</a>
-  </div>
-
 </section>
 
-<!-- FOOTER -->
 <footer>
   © 2026 MusicNewsID - All Rights Reserved
 </footer>
 
+<script>
+const feedUrl =
+'https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&callback=loadPosts';
+
+function loadPosts(data){
+
+  let html = "";
+
+  if(!data.feed.entry){
+    document.getElementById("news-container").innerHTML =
+      "<p>Belum ada artikel.</p>";
+    return;
+  }
+
+  data.feed.entry.forEach(post => {
+
+    let title = post.title.$t;
+
+    let link = "#";
+    post.link.forEach(item=>{
+      if(item.rel === "alternate"){
+        link = item.href;
+      }
+    });
+
+    let content = "";
+
+    if(post.summary){
+      content = post.summary.$t;
+    }else if(post.content){
+      content = post.content.$t;
+    }
+
+    content = content.replace(/<[^>]*>/g,'');
+    content = content.substring(0,200) + "...";
+
+    html += `
+      <div class="card">
+        <h3>${title}</h3>
+        <p>${content}</p>
+        <a href="${link}" target="_blank">
+          Baca Selengkapnya
+        </a>
+      </div>
+    `;
+  });
+
+  document.getElementById("news-container").innerHTML = html;
+}
+
+const script = document.createElement("script");
+script.src = feedUrl;
+document.body.appendChild(script);
+</script>
+
 </body>
 </html>
+```
