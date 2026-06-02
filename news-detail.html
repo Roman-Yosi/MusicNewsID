@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>News - MusicNewsID</title>
+  <title>Detail Berita Roman Yosi</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -10,28 +10,40 @@
 
 <header>
   <div class="logo">MusicNewsID</div>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="news.html">News</a>
-  </nav>
 </header>
 
-<section class="container">
-  <h1>Berita Roman Yosi</h1>
-
-  <div class="card">
-    <h3>Roman Yosi Rilis Lagu Baru</h3>
-    <p>Musisi indie Roman Yosi kembali dengan karya terbaru di tahun ini.</p>
-    <a href="news-detail.html?id=1">Baca Selengkapnya</a>
-  </div>
-
-  <div class="card">
-    <h3>Perjalanan Musik Roman Yosi</h3>
-    <p>Perjalanan karier dan perkembangan musik Roman Yosi di industri musik.</p>
-    <a href="news-detail.html?id=2">Baca Selengkapnya</a>
-  </div>
+<section class="container" id="content">
 
 </section>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const content = document.getElementById("content");
+
+if (id == "1") {
+  content.innerHTML = `
+    <h1>Roman Yosi Rilis Lagu Baru</h1>
+    <p>
+      Roman Yosi resmi merilis lagu terbaru yang mengusung genre Indie Pop dan Acoustic.
+      Lagu ini menceritakan perjalanan hidup, cinta, dan perjuangan dalam bermusik.
+    </p>
+  `;
+}
+else if (id == "2") {
+  content.innerHTML = `
+    <h1>Perjalanan Musik Roman Yosi</h1>
+    <p>
+      Roman Yosi adalah musisi indie asal Indonesia yang terus berkembang dengan karya-karya original.
+      Ia dikenal dengan gaya musik emosional dan cinematic.
+    </p>
+  `;
+}
+else {
+  content.innerHTML = "<h2>❌ Artikel tidak ditemukan</h2>";
+}
+</script>
 
 </body>
 </html>
