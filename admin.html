@@ -1,202 +1,21 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin MusicNewsID</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0f172a;
-  color:#fff;
-}
-
-/* LOGIN */
-#loginBox{
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background:#0f172a;
-  z-index:999;
-}
-
-#loginBox input{
-  padding:10px;
-  width:250px;
-  border:none;
-  border-radius:6px;
-}
-
-#loginBox button{
-  margin-top:10px;
-  padding:10px;
-  width:250px;
-  background:#22c55e;
-  border:none;
-  border-radius:6px;
-}
-
-/* ADMIN */
-.container{
-  display:none;
-  padding:15px;
-}
-
-.card{
-  background:#111827;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-}
-
-input,textarea{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border:none;
-  border-radius:6px;
-}
-
-button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  background:#22c55e;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-}
-
-.danger{
-  background:red;
-  color:#fff;
-}
-
-img{
-  width:100%;
-  margin-top:10px;
-  border-radius:8px;
-}
-</style>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginBox">
-  <h2>🔐 Admin Login</h2>
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">Masuk</button>
-</div>
+<header>
+  <div class="logo">Admin MusicNewsID</div>
+</header>
 
-<!-- ADMIN -->
-<div id="adminPanel" class="container">
+<section class="container">
+  <h1>Panel Admin</h1>
 
-  <div class="card">
-    <h3>Tambah Artikel</h3>
-    <input id="title" placeholder="Judul">
-    <input id="image" placeholder="URL Gambar">
-    <textarea id="content" placeholder="Isi artikel"></textarea>
-    <button onclick="publish()">Publish</button>
-  </div>
-
-  <div class="card">
-    <h3>Daftar Artikel</h3>
-    <div id="list"></div>
-  </div>
-
-</div>
-
-<script>
-let isLogin = false;
-
-/* LOGIN SAFE */
-function login(){
-  try{
-    const pass = document.getElementById("pass").value;
-
-    if(pass === "1234566"){
-      isLogin = true;
-
-      document.getElementById("loginBox").style.display = "none";
-
-      const panel = document.getElementById("adminPanel");
-      if(panel) panel.style.display = "block";
-
-      load();
-    } else {
-      alert("Password salah!");
-    }
-  } catch(e){
-    alert("Error login");
-    console.log(e);
-  }
-}
-
-/* PUBLISH */
-function publish(){
-  if(!isLogin){
-    alert("Login dulu!");
-    return;
-  }
-
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  data.unshift({
-    id: Date.now(),
-    title: document.getElementById("title").value,
-    image: document.getElementById("image").value,
-    content: document.getElementById("content").value
-  });
-
-  localStorage.setItem("news", JSON.stringify(data));
-  load();
-}
-
-/* LOAD SAFE */
-function load(){
-  const list = document.getElementById("list");
-  if(!list) return;
-
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  list.innerHTML = "";
-
-  if(data.length === 0){
-    list.innerHTML = "<p>Belum ada artikel</p>";
-    return;
-  }
-
-  data.forEach((item,i)=>{
-    list.innerHTML += `
-      <div class="card">
-        <h4>${item.title || ""}</h4>
-        ${item.image ? `<img src="${item.image}">` : ""}
-        <p>${(item.content || "").substring(0,120)}</p>
-        <button class="danger" onclick="hapus(${i})">Hapus</button>
-      </div>
-    `;
-  });
-}
-
-/* DELETE */
-function hapus(i){
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-  data.splice(i,1);
-  localStorage.setItem("news", JSON.stringify(data));
-  load();
-}
-
-/* AUTO SAFE START */
-window.onload = function(){
-  console.log("Admin loaded OK");
-};
-</script>
+  <p>Gunakan halaman ini untuk menambah berita manual di GitHub.</p>
+</section>
 
 </body>
 </html>
