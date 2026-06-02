@@ -3,54 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - MusicNewsID</title>
+  <title>News - MusicNewsID</title>
   <link rel="stylesheet" href="style.css">
 
   <style>
-    .panel {
-      background:#1c1c1c;
-      padding:20px;
-      border-radius:10px;
-      margin-bottom:20px;
+    .news-header {
+      padding: 20px;
+      text-align: center;
     }
 
-    input, textarea {
-      width:100%;
-      padding:10px;
-      margin-top:8px;
-      margin-bottom:12px;
-      border-radius:6px;
-      border:1px solid #333;
-      background:#111;
-      color:white;
-    }
-
-    button {
-      padding:10px 15px;
-      background:#ffcc00;
-      border:none;
-      font-weight:bold;
-      cursor:pointer;
-      border-radius:6px;
-    }
-
-    button:hover {
-      opacity:0.8;
-    }
-
-    .badge {
-      display:inline-block;
-      padding:4px 8px;
-      background:#ffcc00;
-      color:black;
-      font-size:12px;
-      border-radius:4px;
-      margin-bottom:10px;
+    .news-header h1 {
+      margin-bottom: 5px;
     }
 
     .card small {
-      color:#aaa;
-      font-size:12px;
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #aaa;
+      padding: 20px;
     }
   </style>
 </head>
@@ -58,76 +32,45 @@
 <body>
 
 <header>
-  <div class="logo">🛠 MusicNewsID Admin Panel</div>
+  <div class="logo">📰 MusicNewsID</div>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="news.html">News</a>
+    <a href="post.html">Post</a>
+    <a href="admin.html">Admin</a>
+  </nav>
 </header>
 
+<!-- HEADER NEWS -->
+<section class="news-header">
+  <h1>Berita Musik Indonesia</h1>
+  <p>Update artis, lagu, dan industri musik terbaru</p>
+</section>
+
+<!-- LIST NEWS -->
 <section class="container">
 
-  <!-- DASHBOARD INFO -->
-  <div class="panel">
-    <span class="badge">ADMIN DASHBOARD</span>
-    <h2>📊 Control Berita MusicNewsID</h2>
-    <p>Gunakan panel ini untuk menambah, melihat, dan mengelola artikel berita musik.</p>
-  </div>
+  <h2>🔥 Artikel Terbaru</h2>
 
-  <!-- FORM INPUT -->
-  <div class="panel">
-    <h3>📝 Buat Artikel Baru</h3>
-
-    <label>Judul Artikel</label>
-    <input id="title" placeholder="Contoh: Roman Yosi Rilis Lagu Baru">
-
-    <label>Isi Artikel</label>
-    <textarea id="content" rows="6" placeholder="Tulis isi berita di sini..."></textarea>
-
-    <button onclick="saveNews()">+ Publikasikan</button>
-  </div>
-
-  <!-- PREVIEW -->
-  <div class="panel">
-    <h3>📌 Artikel Terbaru (Preview)</h3>
-    <div id="list"></div>
-  </div>
+  <div id="newsList"></div>
 
 </section>
 
 <script>
 
-function saveNews() {
-  let title = document.getElementById("title").value.trim();
-  let content = document.getElementById("content").value.trim();
-
-  if (!title || !content) {
-    alert("Judul dan isi wajib diisi!");
-    return;
-  }
-
-  let news = JSON.parse(localStorage.getItem("news") || "[]");
-
-  news.unshift({
-    title,
-    content,
-    time: new Date().toLocaleString()
-  });
-
-  localStorage.setItem("news", JSON.stringify(news));
-
-  document.getElementById("title").value = "";
-  document.getElementById("content").value = "";
-
-  loadNews();
-}
-
 function loadNews() {
   let news = JSON.parse(localStorage.getItem("news") || "[]");
+  let container = document.getElementById("newsList");
 
   let html = "";
 
   if (news.length === 0) {
-    html = "<p>Belum ada artikel dipublikasikan.</p>";
+    container.innerHTML = `<div class="empty">Belum ada artikel dari admin.</div>`;
+    return;
   }
 
-  news.forEach(n => {
+  news.forEach((n, index) => {
 
     if (!n || !n.title || !n.content) return;
 
@@ -136,13 +79,16 @@ function loadNews() {
         <h3>${escapeHTML(n.title)}</h3>
         <small>🕒 ${n.time || "unknown"}</small>
         <p>${escapeHTML(n.content.substring(0, 150))}...</p>
+
+        <a href="news-detail.html?id=${index}" style="color:#ffcc00;">Baca Selengkapnya</a>
       </div>
     `;
   });
 
-  document.getElementById("list").innerHTML = html;
+  container.innerHTML = html;
 }
 
+// anti error / injection
 function escapeHTML(text) {
   return text
     .replaceAll("&", "&amp;")
