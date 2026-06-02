@@ -3,22 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin MusicNewsID</title>
+
 <style>
 body{font-family:Arial;background:#f4f4f4;margin:0;}
 header{background:#111;color:#fff;padding:15px;text-align:center;}
-.container{max-width:600px;margin:auto;padding:15px;}
-.card{background:#fff;padding:20px;border-radius:10px;}
-input,textarea{width:100%;padding:10px;margin:10px 0;}
-button{width:100%;padding:10px;background:#111;color:#fff;border:none;cursor:pointer;}
+.container{max-width:700px;margin:auto;padding:15px;}
+
+.card{background:#fff;padding:20px;border-radius:10px;margin-bottom:15px;}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ddd;
+border-radius:5px;
+}
+
+button{
+width:100%;
+padding:10px;
+background:#111;
+color:#fff;
+border:none;
+cursor:pointer;
+border-radius:5px;
+}
+
+button:hover{background:#333;}
+
+.item{
+background:#fff;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+border-left:4px solid #111;
+}
+
+.del{
+background:red;
+margin-top:5px;
+}
 </style>
 </head>
+
 <body>
 
 <header>
-<h1>Admin Panel</h1>
+<h1>Admin Panel MusicNewsID</h1>
 </header>
 
 <div class="container">
+
 <div class="card">
 
 <input id="title" placeholder="Judul artikel">
@@ -28,9 +63,37 @@ button{width:100%;padding:10px;background:#111;color:#fff;border:none;cursor:poi
 <button onclick="publish()">Publish</button>
 
 </div>
+
+<div class="card">
+<h3>📄 Artikel Tersimpan</h3>
+<div id="list"></div>
+</div>
+
 </div>
 
 <script>
+
+// load data
+function load(){
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+  let list = document.getElementById("list");
+
+  list.innerHTML = "";
+
+  data.forEach((item, index)=>{
+    list.innerHTML += `
+      <div class="item">
+        <b>${item.title}</b><br>
+        ${item.image ? `<img src="${item.image}" style="max-width:100%;margin-top:10px;">` : ""}
+        <p>${item.content.substring(0,120)}...</p>
+
+        <button class="del" onclick="hapus(${index})">Hapus</button>
+      </div>
+    `;
+  });
+}
+
+// publish
 function publish(){
 
   let title = document.getElementById("title").value;
@@ -53,12 +116,23 @@ function publish(){
 
   localStorage.setItem("news", JSON.stringify(data));
 
-  alert("Berhasil dipublish!");
-
   document.getElementById("title").value = "";
   document.getElementById("image").value = "";
   document.getElementById("content").value = "";
+
+  load();
 }
+
+// delete
+function hapus(index){
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+  data.splice(index,1);
+  localStorage.setItem("news", JSON.stringify(data));
+  load();
+}
+
+load();
+
 </script>
 
 </body>
