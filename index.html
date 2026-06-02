@@ -56,12 +56,38 @@ nav a:hover{
   padding:0 15px;
 }
 
-/* CARD */
+/* STATIC CARD */
 .card{
   background:#111827;
   padding:20px;
   border-radius:10px;
   margin-bottom:20px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* NEWS CARD (lebih tegas) */
+.news-card{
+  border-left:3px solid #22c55e;
+}
+
+/* IMAGE */
+img{
+  width:100%;
+  border-radius:10px;
+  margin-top:10px;
+}
+
+/* BUTTON LINK */
+a{
+  color:#22c55e;
+  text-decoration:none;
+  font-weight:bold;
+  display:inline-block;
+  margin-top:10px;
+}
+
+a:hover{
+  text-decoration:underline;
 }
 
 /* FOOTER */
@@ -73,24 +99,6 @@ footer{
   border-top:1px solid #22c55e;
   font-size:13px;
   color:#aaa;
-}
-
-/* NEWS LIST */
-#newsContainer .card{
-  margin-top:15px;
-  border-left:3px solid #22c55e;
-}
-
-img{
-  max-width:100%;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-a{
-  color:#22c55e;
-  text-decoration:none;
-  font-weight:bold;
 }
 </style>
 
@@ -147,7 +155,7 @@ const supabase = createClient(
 
 async function loadNews(){
 
-  let container = document.getElementById("newsContainer");
+  const container = document.getElementById("newsContainer");
 
   let { data, error } = await supabase
     .from("posts")
@@ -155,7 +163,7 @@ async function loadNews(){
     .order("created_at", { ascending: false });
 
   if(error){
-    container.innerHTML = `<div class="card">Error: ${error.message}</div>`;
+    container.innerHTML = `<div class="card">❌ Error: ${error.message}</div>`;
     return;
   }
 
@@ -167,17 +175,22 @@ async function loadNews(){
   container.innerHTML = `<div class="card"><h2>📰 Berita Terbaru</h2></div>`;
 
   data.forEach(item => {
+
     container.innerHTML += `
-      <div class="card">
-        <h3>${item.title}</h3>
+      <div class="card news-card">
+
+        <h3>${item.title || "Tanpa Judul"}</h3>
 
         ${item.image ? `<img src="${item.image}">` : ""}
 
-        <p>${item.content ? item.content.substring(0,150) : ""}...</p>
+        <p>
+          ${item.content ? item.content.substring(0,150) : "Tidak ada isi"}...
+        </p>
 
-        <a href="news.html?id=${item.id}">
-          Baca Selengkapnya
+        <a href="news-detail.html?id=${item.id}">
+          Baca Selengkapnya →
         </a>
+
       </div>
     `;
   });
