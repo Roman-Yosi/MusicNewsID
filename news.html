@@ -40,7 +40,7 @@
 
 <script>
 
-const PASSWORD = "#12345666"; // PASSWORD KAMU
+const PASSWORD = "12345666"; // PASSWORD KAMU (tanpa # biar aman)
 
 function login() {
   let pass = document.getElementById("pass").value;
@@ -79,16 +79,31 @@ function loadNews() {
 
   let html = "";
 
+  if (news.length === 0) {
+    html = "<p>Belum ada berita.</p>";
+  }
+
   news.forEach(n => {
+
+    if (!n || !n.title || !n.content) return; // 🔥 FIX ERROR DATA
+
     html += `
       <div class="card">
-        <h3>${n.title}</h3>
-        <p>${n.content}</p>
+        <h3>${escapeHTML(n.title)}</h3>
+        <p>${escapeHTML(n.content)}</p>
       </div>
     `;
   });
 
   document.getElementById("list").innerHTML = html;
+}
+
+// 🔒 Anti script / error HTML
+function escapeHTML(text) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 </script>
