@@ -2,21 +2,77 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Detail Berita Roman Yosi</title>
+  <title>Detail Berita - MusicNewsID</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: white;
+    }
+
+    header {
+      background: #111;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    p {
+      line-height: 1.6;
+      color: #ddd;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 15px;
+      color: #ffcc00;
+      text-decoration: none;
+    }
+
+    .back:hover {
+      opacity: 0.8;
+    }
+
+  </style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">MusicNewsID</div>
+  📰 MusicNewsID - Detail Berita
 </header>
 
-<section class="container" id="content">
+<section class="container">
+
+  <a class="back" href="news.html">← Kembali ke News</a>
+
+  <div class="card" id="content">
+    Loading...
+  </div>
 
 </section>
 
 <script>
+
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
@@ -43,6 +99,7 @@ else if (id == "2") {
 else {
   content.innerHTML = "<h2>❌ Artikel tidak ditemukan</h2>";
 }
+
 </script>
 
 </body>
