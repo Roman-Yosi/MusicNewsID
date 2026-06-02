@@ -13,6 +13,38 @@ body {
   color: #fff;
 }
 
+/* LOGIN */
+#loginBox{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:#0f172a;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+#loginBox input{
+  padding:10px;
+  width:240px;
+  border:none;
+  border-radius:6px;
+  outline:none;
+}
+
+#loginBox button{
+  margin-top:10px;
+  padding:10px 20px;
+  background:#22c55e;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* HEADER */
 header {
   background: #111827;
   padding: 15px;
@@ -22,12 +54,14 @@ header {
   border-bottom: 2px solid #22c55e;
 }
 
+/* CONTAINER */
 .container {
-  display: grid;
+  display: none;
   grid-template-columns: 220px 1fr;
   height: 100vh;
 }
 
+/* SIDEBAR */
 .sidebar {
   background: #1f2937;
   padding: 20px;
@@ -47,6 +81,7 @@ header {
   background: #22c55e;
 }
 
+/* CONTENT */
 .content {
   padding: 20px;
   overflow-y: auto;
@@ -78,8 +113,8 @@ button:hover {
   background: #16a34a;
 }
 
-small {
-  color: #aaa;
+.danger {
+  background: red !important;
 }
 
 img {
@@ -87,18 +122,17 @@ img {
   border-radius: 8px;
 }
 
-.danger {
-  background: red !important;
-}
-
-.section-title {
-  margin-bottom: 10px;
-}
-
 </style>
 </head>
 
 <body>
+
+<!-- LOGIN GATE -->
+<div id="loginBox">
+  <h2>🔐 Admin Login</h2>
+  <input type="password" id="pass" placeholder="Password admin">
+  <button onclick="login()">Masuk</button>
+</div>
 
 <header>🎵 MusicNewsID Admin Panel</header>
 
@@ -110,22 +144,19 @@ img {
     <a href="#artikel">Artikel</a>
     <a href="#gambar">Galeri</a>
     <a href="#konten">Kelola Konten</a>
-    <a href="index.html">Logout</a>
+    <a href="#" onclick="logout()">Logout</a>
   </div>
 
   <!-- CONTENT -->
   <div class="content">
 
-    <!-- DASHBOARD -->
     <div class="card" id="dashboard">
       <h2>📊 Dashboard</h2>
       <p>Selamat datang di Admin MusicNewsID</p>
-      <small>Kelola artikel & galeri musik kamu di sini</small>
     </div>
 
-    <!-- ARTIKEL -->
     <div class="card" id="artikel">
-      <h2 class="section-title">📝 Upload Artikel Musik</h2>
+      <h2>📝 Upload Artikel Musik</h2>
 
       <input id="title" type="text" placeholder="Judul Artikel">
       <input id="image" type="text" placeholder="URL Gambar (opsional)">
@@ -134,9 +165,8 @@ img {
       <button onclick="publish()">Publish Artikel</button>
     </div>
 
-    <!-- GALERI -->
     <div class="card" id="gambar">
-      <h2 class="section-title">🖼 Galeri Gambar</h2>
+      <h2>🖼 Galeri Gambar</h2>
 
       <input type="file" id="fileInput">
       <button onclick="uploadGallery()">Upload ke Galeri</button>
@@ -146,9 +176,8 @@ img {
       <div id="galleryList"></div>
     </div>
 
-    <!-- KELOLA ARTIKEL -->
     <div class="card" id="konten">
-      <h2 class="section-title">📂 Kelola Artikel</h2>
+      <h2>📂 Kelola Artikel</h2>
       <div id="list"></div>
     </div>
 
@@ -158,9 +187,44 @@ img {
 
 <script>
 
-/* =======================
-   LOAD ARTIKEL
-======================= */
+let isLogin = false;
+
+/* LOGIN */
+function login(){
+  const pass = document.getElementById("pass").value;
+  const adminPass = "romanyosi123";
+
+  if(pass === adminPass){
+    isLogin = true;
+    document.getElementById("loginBox").style.display = "none";
+    document.querySelector(".container").style.display = "grid";
+    init();
+  } else {
+    alert("Password salah!");
+  }
+}
+
+/* LOGOUT */
+function logout(){
+  location.reload();
+}
+
+/* CHECK */
+function check(){
+  if(!isLogin){
+    alert("Silakan login dulu!");
+    return false;
+  }
+  return true;
+}
+
+/* INIT */
+function init(){
+  load();
+  loadGallery();
+}
+
+/* LOAD ARTIKEL */
 function load(){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   let list = document.getElementById("list");
@@ -179,10 +243,9 @@ function load(){
   });
 }
 
-/* =======================
-   PUBLISH ARTIKEL
-======================= */
+/* PUBLISH */
 function publish(){
+  if(!check()) return;
 
   let title = document.getElementById("title").value;
   let image = document.getElementById("image").value;
@@ -209,12 +272,9 @@ function publish(){
   document.getElementById("content").value = "";
 
   load();
-  alert("Artikel berhasil dipublish!");
 }
 
-/* =======================
-   DELETE ARTIKEL
-======================= */
+/* DELETE */
 function hapus(index){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   data.splice(index,1);
@@ -222,10 +282,10 @@ function hapus(index){
   load();
 }
 
-/* =======================
-   UPLOAD GALERI (BASE64)
-======================= */
+/* GALERI */
 function uploadGallery(){
+  if(!check()) return;
+
   const file = document.getElementById("fileInput").files[0];
 
   if(!file){
@@ -236,7 +296,6 @@ function uploadGallery(){
   const reader = new FileReader();
 
   reader.onload = function(e){
-
     let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
 
     gallery.unshift({
@@ -246,45 +305,37 @@ function uploadGallery(){
 
     localStorage.setItem("gallery", JSON.stringify(gallery));
 
-    document.getElementById("status").innerText = "Gambar masuk galeri!";
+    document.getElementById("status").innerText = "Upload berhasil!";
     loadGallery();
   };
 
   reader.readAsDataURL(file);
 }
 
-/* =======================
-   LOAD GALERI
-======================= */
+/* LOAD GALERI */
 function loadGallery(){
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
   let box = document.getElementById("galleryList");
 
   box.innerHTML = "";
 
-  gallery.forEach((item, index) => {
+  gallery.forEach((item,i)=>{
     box.innerHTML += `
       <div class="card">
         <img src="${item.img}" style="width:100%;">
-        <button class="danger" onclick="deleteGallery(${index})">Hapus</button>
+        <button class="danger" onclick="deleteGallery(${i})">Hapus</button>
       </div>
     `;
   });
 }
 
-/* =======================
-   DELETE GALERI
-======================= */
-function deleteGallery(index){
+/* DELETE GALERI */
+function deleteGallery(i){
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-  gallery.splice(index,1);
+  gallery.splice(i,1);
   localStorage.setItem("gallery", JSON.stringify(gallery));
   loadGallery();
 }
-
-/* INIT */
-load();
-loadGallery();
 
 </script>
 
