@@ -1,5 +1,4 @@
 <script type="module">
-
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const supabase = createClient(
@@ -8,12 +7,15 @@ const supabase = createClient(
 );
 
 /* =========================
-   LOGIN
+   STATE LOGIN
 ========================= */
 let isLogin = false;
 
+/* =========================
+   LOGIN
+========================= */
 function login(){
-  const pass = document.getElementById("pass").value;
+  const pass = document.getElementById("pass")?.value || "";
   const adminPass = "romanyosi123";
 
   if(pass === adminPass){
@@ -24,36 +26,6 @@ function login(){
   } else {
     alert("Password salah!");
   }
-}
-
-/* =========================
-   PUBLISH (MASIH LOCAL STORAGE)
-========================= */
-function publish(){
-  if(!check()) return;
-
-  let title = document.getElementById("title").value;
-  let image = document.getElementById("image").value;
-  let content = document.getElementById("content").value;
-
-  if(!title || !content){
-    alert("Judul & isi wajib diisi!");
-    return;
-  }
-
-  // NANTI DIUBAH KE SUPABASE
-  let data = JSON.parse(localStorage.getItem("news") || "[]");
-
-  data.unshift({
-    id: Date.now(),
-    title,
-    image,
-    content
-  });
-
-  localStorage.setItem("news", JSON.stringify(data));
-
-  load();
 }
 
 /* =========================
@@ -76,28 +48,80 @@ function init(){
 }
 
 /* =========================
+   ESCAPE TEXT (ANTI ERROR HTML)
+========================= */
+function safe(text){
+  return String(text || "")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+/* =========================
+   PUBLISH (LOCAL STORAGE - TEMP)
+========================= */
+function publish(){
+  if(!check()) return;
+
+  const title = document.getElementById("title")?.value || "";
+  const image = document.getElementById("image")?.value || "";
+  const content = document.getElementById("content")?.value || "";
+
+  if(!title || !content){
+    alert("Judul & isi wajib diisi!");
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  data.unshift({
+    id: Date.now(),
+    title,
+    image,
+    content
+  });
+
+  localStorage.setItem("news", JSON.stringify(data));
+
+  load();
+}
+
+/* =========================
    LOAD ARTIKEL
 ========================= */
 function load(){
+  const list = document.getElementById("list");
+  if(!list) return;
+
   let data = JSON.parse(localStorage.getItem("news") || "[]");
-  let list = document.getElementById("list");
 
   list.innerHTML = "";
+
+  if(data.length === 0){
+    list.innerHTML = `<div class="card">Belum ada berita</div>`;
+    return;
+  }
 
   data.forEach((item, index) => {
     list.innerHTML += `
       <div class="card">
-        <h3>${item.title}</h3>
+
+        <h3>${safe(item.title)}</h3>
+
         ${item.image ? `<img src="${item.image}" style="width:100%;">` : ""}
-        <p>${item.content.substring(0,120)}...</p>
-        <button class="danger" onclick="hapus(${index})">Hapus</button>
+
+        <p>${safe((item.content || "").substring(0,120))}...</p>
+
+        <button class="danger" onclick="hapus(${index})">
+          Hapus
+        </button>
+
       </div>
     `;
   });
 }
 
 /* =========================
-   DELETE
+   DELETE ARTIKEL
 ========================= */
 function hapus(i){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
@@ -107,12 +131,17 @@ function hapus(i){
 }
 
 /* =========================
-   GALERI (masih localStorage)
+   GALERI UPLOAD
 ========================= */
 function uploadGallery(){
   if(!check()) return;
 
-  const file = document.getElementById("fileInput").files[0];
+  const file = document.getElementById("fileInput")?.files[0];
+
+  if(!file){
+    alert("Pilih gambar dulu!");
+    return;
+  }
 
   const reader = new FileReader();
 
@@ -132,29 +161,54 @@ function uploadGallery(){
   reader.readAsDataURL(file);
 }
 
-/* LOAD GALERI */
+/* =========================
+   LOAD GALERI
+========================= */
 function loadGallery(){
+  const box = document.getElementById("galleryList");
+  if(!box) return;
+
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-  let box = document.getElementById("galleryList");
 
   box.innerHTML = "";
+
+  if(gallery.length === 0){
+    box.innerHTML = `<div class="card">Belum ada gambar</div>`;
+    return;
+  }
 
   gallery.forEach((item,i)=>{
     box.innerHTML += `
       <div class="card">
-        <img src="${item.img}" style="width:100%;">
-        <button class="danger" onclick="deleteGallery(${i})">Hapus</button>
+
+        <img src="${item.img}" style="width:100%; border-radius:10px;">
+
+        <button class="danger" onclick="deleteGallery(${i})">
+          Hapus
+        </button>
+
       </div>
     `;
   });
 }
 
-/* DELETE GALERI */
+/* =========================
+   DELETE GALERI
+========================= */
 function deleteGallery(i){
   let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
   gallery.splice(i,1);
   localStorage.setItem("gallery", JSON.stringify(gallery));
   loadGallery();
 }
+
+/* =========================
+   GLOBAL EXPORT (BIAR HTML BISA PAKAI onclick)
+========================= */
+window.login = login;
+window.publish = publish;
+window.hapus = hapus;
+window.uploadGallery = uploadGallery;
+window.deleteGallery = deleteGallery;
 
 </script>
