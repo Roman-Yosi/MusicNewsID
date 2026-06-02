@@ -82,6 +82,19 @@ small {
   color: #aaa;
 }
 
+img {
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+.danger {
+  background: red !important;
+}
+
+.section-title {
+  margin-bottom: 10px;
+}
+
 </style>
 </head>
 
@@ -94,9 +107,8 @@ small {
   <!-- SIDEBAR -->
   <div class="sidebar">
     <a href="#dashboard">Dashboard</a>
-    <a href="#upload">Upload News</a>
-    <a href="#artikel">Upload Artikel</a>
-    <a href="#gambar">Upload Gambar</a>
+    <a href="#artikel">Artikel</a>
+    <a href="#gambar">Galeri</a>
     <a href="#konten">Kelola Konten</a>
     <a href="index.html">Logout</a>
   </div>
@@ -108,12 +120,12 @@ small {
     <div class="card" id="dashboard">
       <h2>📊 Dashboard</h2>
       <p>Selamat datang di Admin MusicNewsID</p>
-      <small>Kelola artikel & berita musik kamu di sini</small>
+      <small>Kelola artikel & galeri musik kamu di sini</small>
     </div>
 
-    <!-- UPLOAD ARTIKEL -->
+    <!-- ARTIKEL -->
     <div class="card" id="artikel">
-      <h2>📝 Upload Artikel Musik</h2>
+      <h2 class="section-title">📝 Upload Artikel Musik</h2>
 
       <input id="title" type="text" placeholder="Judul Artikel">
       <input id="image" type="text" placeholder="URL Gambar (opsional)">
@@ -122,19 +134,21 @@ small {
       <button onclick="publish()">Publish Artikel</button>
     </div>
 
-    <!-- UPLOAD GAMBAR -->
+    <!-- GALERI -->
     <div class="card" id="gambar">
-      <h2>🖼 Upload Gambar</h2>
+      <h2 class="section-title">🖼 Galeri Gambar</h2>
 
       <input type="file" id="fileInput">
-      <button onclick="previewFile()">Upload Gambar</button>
+      <button onclick="uploadGallery()">Upload ke Galeri</button>
 
       <p id="status"></p>
+
+      <div id="galleryList"></div>
     </div>
 
-    <!-- KELOLA -->
+    <!-- KELOLA ARTIKEL -->
     <div class="card" id="konten">
-      <h2>📂 Kelola Konten</h2>
+      <h2 class="section-title">📂 Kelola Artikel</h2>
       <div id="list"></div>
     </div>
 
@@ -144,7 +158,9 @@ small {
 
 <script>
 
-// LOAD DATA
+/* =======================
+   LOAD ARTIKEL
+======================= */
 function load(){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   let list = document.getElementById("list");
@@ -155,15 +171,17 @@ function load(){
     list.innerHTML += `
       <div class="card">
         <h3>${item.title}</h3>
-        ${item.image ? `<img src="${item.image}" style="width:100%;border-radius:8px;">` : ""}
+        ${item.image ? `<img src="${item.image}" style="width:100%;">` : ""}
         <p>${item.content.substring(0,120)}...</p>
-        <button style="background:red;margin-top:10px;" onclick="hapus(${index})">Hapus</button>
+        <button class="danger" onclick="hapus(${index})">Hapus</button>
       </div>
     `;
   });
 }
 
-// PUBLISH ARTIKEL
+/* =======================
+   PUBLISH ARTIKEL
+======================= */
 function publish(){
 
   let title = document.getElementById("title").value;
@@ -194,7 +212,9 @@ function publish(){
   alert("Artikel berhasil dipublish!");
 }
 
-// DELETE
+/* =======================
+   DELETE ARTIKEL
+======================= */
 function hapus(index){
   let data = JSON.parse(localStorage.getItem("news") || "[]");
   data.splice(index,1);
@@ -202,19 +222,69 @@ function hapus(index){
   load();
 }
 
-// PREVIEW FILE
-function previewFile(){
+/* =======================
+   UPLOAD GALERI (BASE64)
+======================= */
+function uploadGallery(){
   const file = document.getElementById("fileInput").files[0];
+
   if(!file){
-    document.getElementById("status").innerText = "Pilih file dulu!";
+    document.getElementById("status").innerText = "Pilih gambar dulu!";
     return;
   }
 
-  document.getElementById("status").innerText =
-  "File dipilih: " + file.name + " (belum upload ke server)";
+  const reader = new FileReader();
+
+  reader.onload = function(e){
+
+    let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
+
+    gallery.unshift({
+      id: Date.now(),
+      img: e.target.result
+    });
+
+    localStorage.setItem("gallery", JSON.stringify(gallery));
+
+    document.getElementById("status").innerText = "Gambar masuk galeri!";
+    loadGallery();
+  };
+
+  reader.readAsDataURL(file);
 }
 
+/* =======================
+   LOAD GALERI
+======================= */
+function loadGallery(){
+  let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
+  let box = document.getElementById("galleryList");
+
+  box.innerHTML = "";
+
+  gallery.forEach((item, index) => {
+    box.innerHTML += `
+      <div class="card">
+        <img src="${item.img}" style="width:100%;">
+        <button class="danger" onclick="deleteGallery(${index})">Hapus</button>
+      </div>
+    `;
+  });
+}
+
+/* =======================
+   DELETE GALERI
+======================= */
+function deleteGallery(index){
+  let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
+  gallery.splice(index,1);
+  localStorage.setItem("gallery", JSON.stringify(gallery));
+  loadGallery();
+}
+
+/* INIT */
 load();
+loadGallery();
 
 </script>
 
