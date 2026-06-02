@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Berita</title>
+<title>Detail Berita - MusicNewsID</title>
 
 <style>
 body{
@@ -29,7 +29,7 @@ header{
   background:#fff;
   padding:20px;
   border-radius:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 img{
@@ -38,8 +38,9 @@ img{
   margin-bottom:15px;
 }
 
-h1{
+.title{
   font-size:22px;
+  font-weight:bold;
   margin-bottom:10px;
 }
 
@@ -50,12 +51,12 @@ h1{
 }
 
 .content{
-  font-size:15px;
+  font-size:16px;
   line-height:1.6;
   white-space:pre-wrap;
 }
 
-.loading{
+.status{
   text-align:center;
   padding:20px;
   color:#555;
@@ -70,8 +71,8 @@ h1{
 </header>
 
 <div class="container">
-  <div class="card" id="post">
-    <div class="loading">⏳ Memuat artikel...</div>
+  <div id="content">
+    <div class="status">⏳ Memuat artikel...</div>
   </div>
 </div>
 
@@ -80,8 +81,7 @@ h1{
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 
 <script>
-
-// ===== FIREBASE CONFIG =====
+// FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyBeMfwo9TZLN39DQf1rykfo2uBClfP21kY",
   authDomain: "ai-studio-applet-webapp-fbf67.firebaseapp.com",
@@ -94,48 +94,48 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const post = document.getElementById("post");
+const container = document.getElementById("content");
 
-// ambil ID dari URL
-const id = new URLSearchParams(window.location.search).get("id");
+// AMBIL ID DARI URL
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
+// JIKA TIDAK ADA ID
 if(!id){
-  post.innerHTML = "<p>❌ Artikel tidak ditemukan</p>";
+  container.innerHTML = "<div class='status'>❌ Artikel tidak ditemukan (ID kosong)</div>";
 } else {
 
   db.collection("musicnews_articles").doc(id).get()
-  .then((doc) => {
+    .then((doc) => {
 
-    if(!doc.exists){
-      post.innerHTML = "<p>❌ Artikel tidak ditemukan</p>";
-      return;
-    }
-
-    const d = doc.data();
-
-    let date = "";
-    if(d.createdAt){
-      if(typeof d.createdAt === "object" && d.createdAt.toDate){
-        date = d.createdAt.toDate().toLocaleString();
-      } else {
-        date = d.createdAt;
+      if(!doc.exists){
+        container.innerHTML = "<div class='status'>❌ Artikel tidak ditemukan</div>";
+        return;
       }
-    }
 
-    post.innerHTML = `
-      ${d.image ? `<img src="${d.image}">` : ""}
-      <h1>${d.title || "Tanpa judul"}</h1>
-      <div class="date">${date}</div>
-      <div class="content">${d.content || ""}</div>
-    `;
+      const data = doc.data();
 
-  })
-  .catch((error) => {
-    post.innerHTML = "❌ Error: " + error.message;
-  });
+      let date = "";
+      if(data.createdAt){
+        date = typeof data.createdAt === "string"
+          ? data.createdAt
+          : "Baru saja";
+      }
+
+      container.innerHTML = `
+        <div class="card">
+          ${data.image ? `<img src="${data.image}">` : ""}
+          <div class="title">${data.title || "Tanpa Judul"}</div>
+          <div class="date">${date}</div>
+          <div class="content">${data.content || ""}</div>
+        </div>
+      `;
+    })
+    .catch((error) => {
+      container.innerHTML = "<div class='status'>❌ Error: " + error.message + "</div>";
+    });
 
 }
-
 </script>
 
 </body>
