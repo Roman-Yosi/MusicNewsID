@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin MusicNewsID</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -11,19 +10,48 @@
 
 <header>
   <div class="logo">MusicNewsID Admin</div>
-
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="news.html">News</a>
-    <a href="post.html">Post</a>
-    <a href="admin.html">Admin</a>
-  </nav>
 </header>
 
 <section class="container">
-  <h1>Panel Admin</h1>
-  <p>Halaman admin sudah aktif.</p>
+
+  <h2>Tambah Berita</h2>
+
+  <input id="title" placeholder="Judul berita"><br><br>
+  <textarea id="content" placeholder="Isi berita"></textarea><br><br>
+
+  <button onclick="saveNews()">Simpan</button>
+
+  <h3>Preview</h3>
+  <div id="list"></div>
+
 </section>
+
+<script>
+function saveNews() {
+  let title = document.getElementById("title").value;
+  let content = document.getElementById("content").value;
+
+  let news = JSON.parse(localStorage.getItem("news") || "[]");
+
+  news.push({title, content});
+  localStorage.setItem("news", JSON.stringify(news));
+
+  loadNews();
+}
+
+function loadNews() {
+  let news = JSON.parse(localStorage.getItem("news") || "[]");
+
+  let html = "";
+  news.forEach(n => {
+    html += `<div class="card"><h3>${n.title}</h3><p>${n.content}</p></div>`;
+  });
+
+  document.getElementById("list").innerHTML = html;
+}
+
+loadNews();
+</script>
 
 </body>
 </html>
