@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Fix</title>
+<title>Admin MusicNewsID</title>
 
 <style>
 body{
@@ -66,3 +66,120 @@ button{
   padding:10px;
   margin-top:10px;
   background:#22c55e;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+}
+
+.danger{
+  background:red;
+  color:#fff;
+}
+
+img{
+  width:100%;
+  margin-top:10px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2>🔐 Admin Login</h2>
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Masuk</button>
+</div>
+
+<!-- ADMIN -->
+<div class="container">
+
+  <div class="card">
+    <h3>Tambah Artikel</h3>
+    <input id="title" placeholder="Judul">
+    <input id="image" placeholder="URL Gambar">
+    <textarea id="content" placeholder="Isi artikel"></textarea>
+    <button onclick="publish()">Publish</button>
+  </div>
+
+  <div class="card">
+    <h3>Daftar Artikel</h3>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<script>
+let isLogin = false;
+
+/* LOGIN */
+function login(){
+  const pass = document.getElementById("pass").value;
+
+  if(pass === "romanyosi123"){
+    isLogin = true;
+
+    document.getElementById("loginBox").style.display = "none";
+    document.querySelector(".container").style.display = "block";
+
+    load();
+  } else {
+    alert("Password salah!");
+  }
+}
+
+/* PUBLISH */
+function publish(){
+  if(!isLogin) return;
+
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  data.unshift({
+    id: Date.now(),
+    title: document.getElementById("title").value,
+    image: document.getElementById("image").value,
+    content: document.getElementById("content").value
+  });
+
+  localStorage.setItem("news", JSON.stringify(data));
+
+  load();
+}
+
+/* LOAD */
+function load(){
+  const list = document.getElementById("list");
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+
+  list.innerHTML = "";
+
+  if(data.length === 0){
+    list.innerHTML = "<p>Belum ada artikel</p>";
+    return;
+  }
+
+  data.forEach((item,i)=>{
+    list.innerHTML += `
+      <div class="card">
+        <h4>${item.title}</h4>
+        ${item.image ? `<img src="${item.image}">` : ""}
+        <p>${(item.content || "").substring(0,120)}...</p>
+        <button class="danger" onclick="hapus(${i})">Hapus</button>
+      </div>
+    `;
+  });
+}
+
+/* DELETE */
+function hapus(i){
+  let data = JSON.parse(localStorage.getItem("news") || "[]");
+  data.splice(i,1);
+  localStorage.setItem("news", JSON.stringify(data));
+  load();
+}
+</script>
+
+</body>
+</html>
