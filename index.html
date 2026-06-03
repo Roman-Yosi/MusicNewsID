@@ -17,44 +17,46 @@ body{
 header{
   background:#111;
   color:#fff;
-  padding:12px 15px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.logo{
+  padding:10px 12px;
   display:flex;
   align-items:center;
   gap:10px;
 }
 
-.logo img{
-  height:32px;
+/* LOGO kecil seperti Blogger */
+header img{
+  width:28px;
+  height:28px;
   border-radius:50%;
 }
 
-/* FEED STYLE (seperti Blogger mobile m=1) */
+header span{
+  font-size:16px;
+  font-weight:bold;
+}
+
+/* FEED */
 .feed{
-  max-width:600px;
+  max-width:650px;
   margin:auto;
   padding:10px;
 }
 
-/* CARD POST */
+/* CARD */
 .post{
   background:#fff;
   margin-bottom:12px;
   border-radius:10px;
   overflow:hidden;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* THUMBNAIL */
+/* GAMBAR HARUS BESAR DI DEPAN */
 .post img{
   width:100%;
-  height:200px;
+  height:220px;
   object-fit:cover;
+  background:#ddd;
 }
 
 /* CONTENT */
@@ -65,7 +67,7 @@ header{
 .title{
   font-size:16px;
   font-weight:bold;
-  margin:0 0 8px;
+  margin:0 0 6px;
 }
 
 .desc{
@@ -91,11 +93,10 @@ header{
 
 <body>
 
+<!-- HEADER BLOGGER STYLE -->
 <header>
-  <div class="logo">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
-    <strong>MusicNewsID</strong>
-  </div>
+  <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
+  <span>MusicNewsID</span>
 </header>
 
 <div class="feed" id="feed">
@@ -118,7 +119,7 @@ function load(data){
 
   data.feed.entry.forEach(post => {
 
-    const title = post.title?.$t || "";
+    const title = post.title?.$t || "No Title";
 
     let link = "#";
     post.link.forEach(l=>{
@@ -128,12 +129,15 @@ function load(data){
     let content = post.summary?.$t || post.content?.$t || "";
     content = content.replace(/<[^>]*>/g,'').substring(0,120);
 
-    // ambil gambar artikel (thumbnail Blogger)
+    /* 🔥 FIX GAMBAR (INI YANG SELALU ERROR DI VERSI KAMU) */
     let img = "";
+
     if(post.media$thumbnail){
       img = post.media$thumbnail.url.replace("s72-c","s600");
     } else {
-      img = "https://via.placeholder.com/600x300?text=MusicNewsID";
+      /* fallback ambil gambar dari konten */
+      let match = post.content?.$t?.match(/<img[^>]+src="([^">]+)"/);
+      img = match ? match[1] : "https://via.placeholder.com/600x300?text=MusicNewsID";
     }
 
     html += `
@@ -142,7 +146,7 @@ function load(data){
         <div class="content">
           <div class="title">${title}</div>
           <div class="desc">${content}...</div>
-          <a class="read" href="${link}" target="_blank">Baca Artikel</a>
+          <a class="read" href="${link}" target="_blank">Baca Selengkapnya</a>
         </div>
       </div>
     `;
