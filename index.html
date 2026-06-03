@@ -1,29 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MusicNewsID</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h1>MusicNewsID</h1>
-<div id="news"></div>
+<header>
+  MusicNewsID
+</header>
+
+<nav>
+  <a href="#">HOME</a>
+  <a href="#">MUSIC</a>
+  <a href="#">TRENDING</a>
+</nav>
+
+<div class="container">
+  <h2>Berita Terbaru</h2>
+  <div id="news">Memuat artikel...</div>
+</div>
+
+<footer>
+  © 2026 MusicNewsID - All Rights Reserved
+</footer>
 
 <script>
-fetch("rss.json")
-  .then(res => res.json())
-  .then(data => {
-    let html = "";
-    data.forEach(item => {
-      html += `
-        <div style="margin-bottom:20px">
-          <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
-          <small>${item.date}</small>
-          <p>${item.description}</p>
+async function loadRSS() {
+  try {
+    const res = await fetch("rss.json");
+    const data = await res.json();
+
+    if (!data || data.length === 0) {
+      document.getElementById("news").innerHTML = "<p>Tidak ada berita.</p>";
+      return;
+    }
+
+    const html = data.map(item => `
+      <div class="news-card">
+        <h3>
+          <a href="${item.link}" target="_blank">
+            ${item.title}
+          </a>
+        </h3>
+
+        <div class="news-date">
+          ${new Date(item.date).toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          })}
         </div>
-      `;
-    });
+
+        <div class="news-desc">
+          ${item.description ? item.description.substring(0, 180) + "..." : ""}
+        </div>
+      </div>
+    `).join("");
+
     document.getElementById("news").innerHTML = html;
-  });
+
+  } catch (error) {
+    document.getElementById("news").innerHTML =
+      "<p>Gagal memuat artikel RSS.</p>";
+    console.error(error);
+  }
+}
+
+loadRSS();
 </script>
 
 </body>
