@@ -4,104 +4,87 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MusicNewsID - Portal Berita Musik Indonesia</title>
-<meta name="description" content="Portal berita musik Indonesia terbaru dari Blogger MusicNewsID">
+<title>MusicNewsID</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#0f0f0f;
-  color:#fff;
+  background:#f5f5f5;
 }
 
-/* HEADER */
+/* HEADER ala Blogger */
 header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px;
   background:#111;
-  position:sticky;
-  top:0;
+  color:#fff;
+  padding:12px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
 .logo{
   display:flex;
   align-items:center;
   gap:10px;
-  font-weight:bold;
 }
 
 .logo img{
-  height:35px;
+  height:32px;
+  border-radius:50%;
 }
 
-/* HERO */
-.hero{
-  padding:40px 20px;
-  text-align:center;
-  background:linear-gradient(45deg,#111,#222);
-}
-
-.hero h1{
-  margin:0;
-  font-size:28px;
-}
-
-.hero p{
-  color:#ccc;
-}
-
-/* NEWS GRID */
-.container{
-  max-width:1000px;
+/* FEED STYLE (seperti Blogger mobile m=1) */
+.feed{
+  max-width:600px;
   margin:auto;
-  padding:15px;
+  padding:10px;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:15px;
-}
-
-/* CARD */
-.card{
-  background:#1a1a1a;
+/* CARD POST */
+.post{
+  background:#fff;
+  margin-bottom:12px;
   border-radius:10px;
-  padding:15px;
-  transition:0.2s;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
-.card:hover{
-  transform:scale(1.02);
+/* THUMBNAIL */
+.post img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
 }
 
-.card h3{
+/* CONTENT */
+.content{
+  padding:12px;
+}
+
+.title{
   font-size:16px;
-  margin:0 0 10px;
+  font-weight:bold;
+  margin:0 0 8px;
 }
 
-.card p{
+.desc{
   font-size:13px;
-  color:#ccc;
+  color:#444;
 }
 
-.card a{
+.read{
   display:inline-block;
-  margin-top:10px;
-  color:#ffcc00;
+  margin-top:8px;
+  color:#1a73e8;
   text-decoration:none;
   font-weight:bold;
 }
 
-/* FOOTER */
-footer{
+.loading{
   text-align:center;
   padding:20px;
   color:#777;
-  margin-top:30px;
 }
 </style>
 </head>
@@ -111,69 +94,61 @@ footer{
 <header>
   <div class="logo">
     <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
-    <span>MusicNewsID</span>
+    <strong>MusicNewsID</strong>
   </div>
-
-  <nav>
-    <a href="#" style="color:white;text-decoration:none;">Home</a>
-  </nav>
 </header>
 
-<section class="hero">
-  <h1>Portal Berita Musik Indonesia</h1>
-  <p>Semua artikel otomatis dari Blogger</p>
-</section>
-
-<section class="container">
-  <h2>🔥 Artikel Terbaru</h2>
-
-  <div id="news" class="grid">
-    <div class="card">Memuat artikel...</div>
-  </div>
-</section>
-
-<footer>
-  © 2026 MusicNewsID - All Rights Reserved
-</footer>
+<div class="feed" id="feed">
+  <div class="loading">Memuat artikel...</div>
+</div>
 
 <script>
 const url =
-"https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=12&callback=loadPosts";
+"https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=10&callback=load";
 
-function loadPosts(data){
+function load(data){
 
   let html = "";
 
   if(!data.feed.entry){
-    document.getElementById("news").innerHTML =
-      "<div class='card'>Tidak ada artikel</div>";
+    document.getElementById("feed").innerHTML =
+      "<div class='loading'>Tidak ada artikel</div>";
     return;
   }
 
   data.feed.entry.forEach(post => {
 
-    const title = post.title?.$t || "No Title";
+    const title = post.title?.$t || "";
 
     let link = "#";
-    if(post.link){
-      post.link.forEach(l=>{
-        if(l.rel === "alternate") link = l.href;
-      });
-    }
+    post.link.forEach(l=>{
+      if(l.rel==="alternate") link = l.href;
+    });
 
     let content = post.summary?.$t || post.content?.$t || "";
     content = content.replace(/<[^>]*>/g,'').substring(0,120);
 
+    // ambil gambar artikel (thumbnail Blogger)
+    let img = "";
+    if(post.media$thumbnail){
+      img = post.media$thumbnail.url.replace("s72-c","s600");
+    } else {
+      img = "https://via.placeholder.com/600x300?text=MusicNewsID";
+    }
+
     html += `
-      <div class="card">
-        <h3>${title}</h3>
-        <p>${content}...</p>
-        <a href="${link}" target="_blank">Baca Selengkapnya</a>
+      <div class="post">
+        <img src="${img}">
+        <div class="content">
+          <div class="title">${title}</div>
+          <div class="desc">${content}...</div>
+          <a class="read" href="${link}" target="_blank">Baca Artikel</a>
+        </div>
       </div>
     `;
   });
 
-  document.getElementById("news").innerHTML = html;
+  document.getElementById("feed").innerHTML = html;
 }
 
 const s = document.createElement("script");
