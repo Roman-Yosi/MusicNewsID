@@ -1,153 +1,59 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MusicNewsID</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f1f1f1;
-}
-
-/* 🔥 HEADER FIX (CENTER APP STYLE) */
-.topbar{
-  background:#ff5722;
-  color:white;
-  padding:12px 10px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  position:sticky;
-  top:0;
-  z-index:1000;
-}
-
-/* LOGO BESAR DI TENGAH */
-.topbar img{
-  width:55px;
-  height:55px;
-  object-fit:contain;
-  margin-bottom:5px;
-}
-
-/* NAMA BRAND */
-.topbar span{
-  font-size:18px;
-  font-weight:bold;
-  letter-spacing:0.5px;
-}
-
-/* HERO */
-.hero{
-  padding:15px;
-  background:white;
-  text-align:center;
-  font-size:14px;
-  color:#444;
-}
-
-/* FEED */
-.container{
-  max-width:800px;
-  margin:auto;
-  padding:10px;
-}
-
-/* POST CARD */
-.post{
-  background:white;
-  margin-bottom:10px;
-  padding:12px;
-  border-radius:8px;
-  box-shadow:0 1px 3px rgba(0,0,0,0.1);
-}
-
-.post img{
-  width:100%;
-  border-radius:8px;
-  margin-bottom:8px;
-}
-
-.post h3{
-  margin:0 0 8px 0;
-  font-size:17px;
-}
-
-.post p{
-  font-size:14px;
-  color:#444;
-}
-
-.post a{
-  color:#ff5722;
-  font-weight:bold;
-  text-decoration:none;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MusicNewsID</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- 🔥 HEADER FIX -->
-<div class="topbar">
-  <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID">
-  <span>MusicNewsID</span>
-</div>
+<header>
+  <div class="logo">MusicNewsID</div>
 
-<!-- HERO -->
-<div class="hero">
-  🔥 Breaking News Musik Indonesia - Update dari Blogger
-</div>
+  <nav>
+    <a href="#">HOME</a>
+    <a href="#">MUSIC</a>
+    <a href="#">TRENDING</a>
+  </nav>
+</header>
 
-<!-- FEED -->
-<div class="container" id="feed">
-  <p>Memuat artikel...</p>
-</div>
+<section class="container">
+
+  <h1>Berita Terbaru</h1>
+
+  <div id="news"></div>
+
+</section>
 
 <script>
-const feedUrl =
-"https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=10&callback=load";
+async function loadBlog() {
+  const res = await fetch("https://musicnewsid.blogspot.com/feeds/posts/default?alt=json");
+  const data = await res.json();
 
-function load(data){
-
+  const posts = data.feed.entry;
   let html = "";
 
-  data.feed.entry.forEach(post => {
-
+  posts.forEach(post => {
     let title = post.title.$t;
+    let content = post.content.$t;
 
-    let link = "#";
-    post.link.forEach(l=>{
-      if(l.rel==="alternate") link = l.href;
-    });
-
-    let content = post.summary?.$t || post.content?.$t || "";
-    content = content.replace(/<[^>]*>/g,'').substring(0,160);
-
-    let img = "";
-    let match = (post.content?.$t || "").match(/<img[^>]+src="([^">]+)"/);
-    if(match) img = match[1];
+    // hapus tag HTML
+    let clean = content.replace(/<[^>]*>/g, "");
 
     html += `
-      <div class="post">
-        ${img ? `<img src="${img}">` : ""}
-        <h3>${title}</h3>
-        <p>${content}...</p>
-        <a href="${link}" target="_blank">Baca Selengkapnya</a>
+      <div class="card">
+        <h2>${title}</h2>
+        <p>${clean.substring(0, 180)}...</p>
       </div>
     `;
   });
 
-  document.getElementById("feed").innerHTML = html;
+  document.getElementById("news").innerHTML = html;
 }
 
-const s = document.createElement("script");
-s.src = feedUrl;
-document.body.appendChild(s);
+loadBlog();
 </script>
 
 </body>
