@@ -1,158 +1,35 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MusicNewsID - Berita Musik Indonesia</title>
-<link rel="stylesheet" href="style.css">
-
-<style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#0f0f0f;
-  color:#fff;
-}
-
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 20px;
-  background:#111;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:bold;
-  font-size:20px;
-}
-
-.logo img{
-  height:40px;
-}
-
-nav a{
-  color:white;
-  text-decoration:none;
-  margin-left:15px;
-  font-weight:500;
-}
-
-nav a:hover{
-  color:#ffcc00;
-}
-
-.hero{
-  text-align:center;
-  padding:70px 20px;
-  background:linear-gradient(45deg,#111,#222);
-}
-
-.hero h1{
-  margin:0;
-  font-size:34px;
-}
-
-.hero p{
-  color:#ccc;
-}
-
-.container{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-}
-
-.card{
-  background:#1a1a1a;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:20px;
-}
-
-.card h3{
-  margin-top:0;
-}
-
-.card p{
-  color:#ccc;
-}
-
-.card a{
-  color:#ffcc00;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-footer{
-  text-align:center;
-  padding:20px;
-  background:#111;
-  color:#aaa;
-  margin-top:40px;
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <div class="logo">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
-    <span>MusicNewsID</span>
-  </div>
-
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="https://musicnewsid.blogspot.com/" target="_blank">Admin Blogger</a>
-  </nav>
-</header>
-
-<section class="hero">
-  <h1>Berita Musik Indonesia Terbaru</h1>
-  <p>Semua artikel otomatis dari WordPress</p>
-</section>
-
-<section class="container">
-  <h2>🔥 Berita Terbaru</h2>
-
-  <div id="news-container">
-    <p>Memuat artikel...</p>
-  </div>
-</section>
-
-<footer>
-  © 2026 MusicNewsID - All Rights Reserved
-</footer>
-
 <script>
-const apiUrl = "https://romanyosi5.wordpress.com/wp-json/wp/v2/posts?per_page=10";
+const rssUrl = "https://romanyosi5.wordpress.com/feed/";
 
-fetch(apiUrl)
-.then(res => res.json())
-.then(data => {
+fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(rssUrl))
+.then(res => res.text())
+.then(str => {
+
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(str, "text/xml");
+
+  const items = Array.from(xml.querySelectorAll("item"));
 
   let html = "";
 
-  if(!data || data.length === 0){
+  if(items.length === 0){
     document.getElementById("news-container").innerHTML =
     "<p>Tidak ada artikel</p>";
     return;
   }
 
-  data.forEach(post => {
+  items.forEach(item => {
 
-    const title = post.title.rendered;
-    const link = post.link;
-    const desc = post.excerpt.rendered.replace(/<[^>]*>/g,'').substring(0,180);
+    const title = item.querySelector("title")?.textContent || "";
+    const link = item.querySelector("link")?.textContent || "";
+    const desc = item.querySelector("description")?.textContent || "";
+
+    const clean = desc.replace(/<[^>]*>/g,'').substring(0,180);
 
     html += `
       <div class="card">
         <h3>${title}</h3>
-        <p>${desc}...</p>
+        <p>${clean}...</p>
         <a href="${link}" target="_blank">Baca Selengkapnya</a>
       </div>
     `;
@@ -161,11 +38,8 @@ fetch(apiUrl)
   document.getElementById("news-container").innerHTML = html;
 
 })
-.catch(err => {
+.catch(() => {
   document.getElementById("news-container").innerHTML =
-  "<p>Gagal memuat artikel WordPress API</p>";
+  "<p>Gagal memuat artikel</p>";
 });
 </script>
-
-</body>
-</html>
