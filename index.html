@@ -12,42 +12,42 @@ body{
   background:#f1f1f1;
 }
 
-/* 🔥 TOP BAR seperti Blogger */
+/* 🔥 HEADER FIX (CENTER APP STYLE) */
 .topbar{
   background:#ff5722;
   color:white;
-  padding:10px 15px;
+  padding:12px 10px;
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:10px;
+  justify-content:center;
   position:sticky;
   top:0;
   z-index:1000;
 }
 
-/* LOGO */
+/* LOGO BESAR DI TENGAH */
 .topbar img{
-  width:28px;
-  height:28px;
+  width:55px;
+  height:55px;
+  object-fit:contain;
+  margin-bottom:5px;
 }
 
-/* TITLE */
+/* NAMA BRAND */
 .topbar span{
+  font-size:18px;
   font-weight:bold;
-  font-size:16px;
-}
-
-/* MENU */
-.menu{
-  margin-left:auto;
-  font-size:14px;
+  letter-spacing:0.5px;
 }
 
 /* HERO */
 .hero{
-  padding:20px;
+  padding:15px;
   background:white;
-  text-align:left;
+  text-align:center;
+  font-size:14px;
+  color:#444;
 }
 
 /* FEED */
@@ -57,21 +57,29 @@ body{
   padding:10px;
 }
 
+/* POST CARD */
 .post{
   background:white;
   margin-bottom:10px;
-  padding:15px;
-  border-radius:6px;
+  padding:12px;
+  border-radius:8px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.1);
+}
+
+.post img{
+  width:100%;
+  border-radius:8px;
+  margin-bottom:8px;
 }
 
 .post h3{
-  margin:0 0 10px 0;
-  font-size:18px;
+  margin:0 0 8px 0;
+  font-size:17px;
 }
 
 .post p{
-  color:#444;
   font-size:14px;
+  color:#444;
 }
 
 .post a{
@@ -79,30 +87,23 @@ body{
   font-weight:bold;
   text-decoration:none;
 }
-
-.post img{
-  width:100%;
-  border-radius:6px;
-  margin-bottom:10px;
-}
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 HEADER BLOGGER STYLE -->
+<!-- 🔥 HEADER FIX -->
 <div class="topbar">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Blogger_icon.svg">
+  <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID">
   <span>MusicNewsID</span>
-
-  <div class="menu">Home • Trending</div>
 </div>
 
+<!-- HERO -->
 <div class="hero">
-  <h2>🔥 Breaking News Musik Indonesia</h2>
-  <p>Update otomatis dari Blogger</p>
+  🔥 Breaking News Musik Indonesia - Update dari Blogger
 </div>
 
+<!-- FEED -->
 <div class="container" id="feed">
   <p>Memuat artikel...</p>
 </div>
@@ -125,7 +126,7 @@ function load(data){
     });
 
     let content = post.summary?.$t || post.content?.$t || "";
-    content = content.replace(/<[^>]*>/g,'').substring(0,180);
+    content = content.replace(/<[^>]*>/g,'').substring(0,160);
 
     let img = "";
     let match = (post.content?.$t || "").match(/<img[^>]+src="([^">]+)"/);
