@@ -1,52 +1,53 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MusicNewsID</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contoh Halaman HTML dan CSS</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
+    <header>
+        <h1>Selamat Datang di Halaman Saya</h1>
+        <nav>
+            <ul>
+                <li><a href="#home" class="active">Beranda</a></li>
+                <li><a href="#about">Tentang</a></li>
+                <li><a href="#contact">Kontak</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<header>
-  MusicNewsID
-</header>
+    <main>
+        <section id="home">
+            <h2>Beranda</h2>
+            <p>Ini adalah contoh halaman web sederhana dengan HTML dan CSS.</p>
+        </section>
 
-<section class="container">
-  <h2>Berita Terbaru (Auto RSS)</h2>
+        <section id="about">
+            <h2>Tentang Saya</h2>
+            <p>Saya seorang pengembang web yang sedang belajar membuat halaman yang menarik dan responsif.</p>
+        </section>
 
-  <div id="news">Loading artikel...</div>
-</section>
+        <section id="contact">
+            <h2>Kontak</h2>
+            <form>
+                <label for="name">Nama:</label><br />
+                <input type="text" id="name" name="name" placeholder="Masukkan nama Anda" required /><br />
 
-<script>
-async function loadRSS() {
-  const rssUrl = "https://romanyosi5.wordpress.com/feed/";
+                <label for="email">Email:</label><br />
+                <input type="email" id="email" name="email" placeholder="Masukkan email Anda" required /><br />
 
-  const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
+                <label for="message">Pesan:</label><br />
+                <textarea id="message" name="message" rows="4" placeholder="Tulis pesan Anda di sini..." required></textarea><br />
 
-  try {
-    const res = await fetch(api);
-    const data = await res.json();
+                <button type="submit">Kirim</button>
+            </form>
+        </section>
+    </main>
 
-    if (!data.items) throw new Error("RSS tidak terbaca");
-
-    document.getElementById("news").innerHTML =
-      data.items.map(item => `
-        <div class="card">
-          <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
-          <p>${item.description.replace(/<[^>]*>/g,'').substring(0,120)}...</p>
-        </div>
-      `).join("");
-
-  } catch (err) {
-    document.getElementById("news").innerHTML =
-      "<div class='card'>Gagal load RSS WordPress</div>";
-  }
-}
-
-loadRSS();
-</script>
-
+    <footer>
+        <p>&copy; 2026 Contoh Halaman. Semua hak cipta dilindungi.</p>
+    </footer>
 </body>
 </html>
