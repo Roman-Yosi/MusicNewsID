@@ -3,34 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MusicNewsID - Portal Berita Musik</title>
+  <title>MusicNewsID</title>
+
   <link rel="stylesheet" href="style.css">
 
-  <!-- anti cache -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
 </head>
 
 <body>
 
-<header>
+<header class="header">
   <div class="logo">MusicNewsID</div>
 
-  <nav>
+  <nav class="nav">
     <a href="#">HOME</a>
     <a href="#">MUSIC</a>
     <a href="#">TRENDING</a>
   </nav>
 </header>
 
-<section class="container">
+<main class="container">
 
   <h1>Berita Terbaru</h1>
 
-  <div id="news">Memuat artikel...</div>
+  <div id="news" class="grid">Memuat artikel...</div>
 
-</section>
+</main>
 
 <script>
 async function loadBlog() {
@@ -52,13 +50,18 @@ async function loadBlog() {
     data.items.forEach(post => {
 
       let title = post.title || "Tanpa Judul";
-      let desc = post.description ? post.description.replace(/<[^>]*>/g,'') : "";
-      let link = post.link || "#";
+
+      // FIX: ambil teks bersih saja
+      let desc = post.description
+        ? post.description.replace(/<[^>]*>/g,'')
+        : "";
+
+      let link = post.link;
 
       html += `
         <article class="card">
           <h2>${title}</h2>
-          <p>${desc.substring(0, 160)}...</p>
+          <p>${desc.substring(0, 140)}...</p>
           <a href="${link}" target="_blank">Baca Selengkapnya →</a>
         </article>
       `;
