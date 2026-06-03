@@ -9,78 +9,62 @@
 
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">MusicNewsID</div>
-
-  <nav>
-    <a href="#">HOME</a>
-    <a href="#">MUSIC</a>
-    <a href="#">TRENDING</a>
-  </nav>
 </header>
 
-<!-- HERO / HALAMAN UTAMA -->
-<section class="hero">
-  <h1>Berita Musik Terbaru Indonesia</h1>
-  <p>Update artikel, trending musik, dan berita artis setiap hari</p>
-</section>
+<div class="container">
 
-<!-- ARTIKEL UTAMA -->
-<section class="container">
+  <h2>Berita Terbaru</h2>
 
-  <h2>🔥 Artikel Terbaru</h2>
+  <div id="blog">Memuat artikel...</div>
 
-  <div id="news">Loading berita...</div>
-
-</section>
+</div>
 
 <script>
 async function loadBlog() {
   try {
 
-    const rss = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=rss";
-    const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss);
+    // FEED YANG PALING STABIL (JANGAN ALT JSON)
+    const rssFeed = "https://musicnewsid.blogspot.com/feeds/posts/default";
 
-    const res = await fetch(api);
+    // RSS to JSON converter (lebih stabil dari fetch langsung)
+    const apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssFeed);
+
+    const res = await fetch(apiUrl);
     const data = await res.json();
+
+    console.log("FEED DATA:", data);
+
+    if (!data.items || data.items.length === 0) {
+      document.getElementById("blog").innerHTML = "Tidak ada artikel ditemukan.";
+      return;
+    }
 
     let html = "";
 
-    data.items.forEach((post, index) => {
+    data.items.forEach(post => {
 
       let title = post.title;
-      let desc = post.description.replace(/<[^>]*>/g,'');
-      let link = post.link;
+      let content = post.content || post.description || "";
 
-      // ARTIKEL PERTAMA (HEADLINE BESAR)
-      if (index === 0) {
-        html += `
-          <div class="featured">
-            <h2>${title}</h2>
-            <p>${desc.substring(0, 200)}...</p>
-            <a href="${link}" target="_blank">Baca Selengkapnya</a>
-          </div>
-        `;
-      }
+      // bersihkan HTML
+      let clean = content.replace(/<[^>]*>/g, '');
 
-      // ARTIKEL LAIN
-      else {
-        html += `
-          <div class="card">
-            <h3>${title}</h3>
-            <p>${desc.substring(0, 120)}...</p>
-            <a href="${link}" target="_blank">Baca</a>
-          </div>
-        `;
-      }
+      html += `
+        <div class="post">
+          <h3>${title}</h3>
+          <p>${clean.substring(0, 200)}...</p>
+          <a href="${post.link}" target="_blank">Baca Selengkapnya</a>
+        </div>
+      `;
     });
 
-    document.getElementById("news").innerHTML = html;
+    document.getElementById("blog").innerHTML = html;
 
-  } catch (err) {
-    document.getElementById("news").innerHTML = "Gagal memuat artikel.";
-    console.log(err);
+  } catch (error) {
+    console.log("ERROR FEED:", error);
+    document.getElementById("blog").innerHTML = "Gagal memuat artikel dari Blogger.";
   }
 }
 
