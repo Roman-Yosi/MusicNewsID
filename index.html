@@ -1,13 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MusicNewsID - Berita Musik Indonesia</title>
-
-<meta name="description" content="MusicNewsID - Portal berita musik Indonesia terbaru">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://roman-yosi.github.io/MusicNewsID/">
+<link rel="stylesheet" href="style.css">
 
 <style>
 body{
@@ -17,7 +15,6 @@ body{
   color:#fff;
 }
 
-/* HEADER */
 header{
   display:flex;
   justify-content:space-between;
@@ -49,39 +46,36 @@ nav a:hover{
   color:#ffcc00;
 }
 
-/* HERO */
 .hero{
   text-align:center;
-  padding:60px 20px;
+  padding:70px 20px;
   background:linear-gradient(45deg,#111,#222);
 }
 
 .hero h1{
   margin:0;
-  font-size:32px;
+  font-size:34px;
 }
 
 .hero p{
   color:#ccc;
 }
 
-/* CONTAINER */
 .container{
   max-width:1000px;
   margin:auto;
   padding:20px;
 }
 
-/* CARD */
 .card{
   background:#1a1a1a;
   padding:20px;
   border-radius:10px;
-  margin-bottom:15px;
+  margin-bottom:20px;
 }
 
 .card h3{
-  margin:0 0 10px;
+  margin-top:0;
 }
 
 .card p{
@@ -94,18 +88,16 @@ nav a:hover{
   font-weight:bold;
 }
 
-/* FOOTER */
+.card a:hover{
+  text-decoration:underline;
+}
+
 footer{
   text-align:center;
   padding:20px;
   background:#111;
   color:#aaa;
   margin-top:40px;
-}
-
-/* LOADING */
-.loading{
-  color:#aaa;
 }
 </style>
 </head>
@@ -114,26 +106,26 @@ footer{
 
 <header>
   <div class="logo">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
+    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID">
     <span>MusicNewsID</span>
   </div>
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="https://musicnewsid.blogspot.com/" target="_blank">Blogger Admin</a>
+    <a href="https://musicnewsid.blogspot.com/" target="_blank">Admin Blogger</a>
   </nav>
 </header>
 
 <section class="hero">
   <h1>Berita Musik Indonesia Terbaru</h1>
-  <p>Update otomatis dari Blogger / WordPress</p>
+  <p>Semua artikel otomatis terhubung dari Blogger MusicNewsID</p>
 </section>
 
 <section class="container">
   <h2>🔥 Berita Terbaru</h2>
 
   <div id="news-container">
-    <p class="loading">Memuat artikel...</p>
+    <p>Memuat artikel...</p>
   </div>
 </section>
 
@@ -142,59 +134,60 @@ footer{
 </footer>
 
 <script>
-const rssUrl = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=rss";
+const feedUrl =
+'https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&callback=loadPosts';
 
-async function loadNews(){
-  try{
+function loadPosts(data){
 
-    const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(rssUrl));
-    const data = await res.json();
+  let html = "";
 
-    if(!data.contents){
-      throw new Error("RSS kosong");
-    }
+  if(!data.feed.entry){
+    document.getElementById("news-container").innerHTML =
+      "<p>Belum ada artikel.</p>";
+    return;
+  }
 
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(data.contents, "text/xml");
+  data.feed.entry.forEach(post => {
 
-    const items = Array.from(xml.querySelectorAll("item"));
+    let title = post.title.$t;
 
-    if(items.length === 0){
-      document.getElementById("news-container").innerHTML =
-      "<p>Tidak ada artikel</p>";
-      return;
-    }
-
-    let html = "";
-
-    items.forEach(item => {
-
-      const title = item.querySelector("title")?.textContent || "No Title";
-      const link = item.querySelector("link")?.textContent || "#";
-      const desc = item.querySelector("description")?.textContent || "";
-
-      const clean = desc.replace(/<[^>]*>/g,'').substring(0,160);
-
-      html += `
-        <div class="card">
-          <h3>${title}</h3>
-          <p>${clean}...</p>
-          <a href="${link}" target="_blank">Baca Selengkapnya</a>
-        </div>
-      `;
+    let link = "#";
+    post.link.forEach(item=>{
+      if(item.rel === "alternate"){
+        link = item.href;
+      }
     });
 
-    document.getElementById("news-container").innerHTML = html;
+    let content = "";
 
-  } catch(err){
-    console.log(err);
-    document.getElementById("news-container").innerHTML =
-    "<p>Gagal memuat artikel (RSS error / koneksi)</p>";
-  }
+    if(post.summary){
+      content = post.summary.$t;
+    }else if(post.content){
+      content = post.content.$t;
+    }
+
+    content = content.replace(/<[^>]*>/g,'');
+    content = content.substring(0,200) + "...";
+
+    html += `
+      <div class="card">
+        <h3>${title}</h3>
+        <p>${content}</p>
+        <a href="${link}" target="_blank">
+          Baca Selengkapnya
+        </a>
+      </div>
+    `;
+  });
+
+  document.getElementById("news-container").innerHTML = html;
 }
 
-loadNews();
+const script = document.createElement("script");
+script.src = feedUrl;
+document.body.appendChild(script);
 </script>
 
 </body>
 </html>
+```
