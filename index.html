@@ -129,45 +129,30 @@ footer{
 </footer>
 
 <script>
-const rssUrl = "https://romanyosi5.wordpress.com/feed/";
-const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rssUrl);
+const apiUrl = "https://romanyosi5.wordpress.com/wp-json/wp/v2/posts?per_page=10";
 
-fetch(proxy)
-.then(res => res.text())
-.then(str => {
-
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(str, "text/xml");
-
-  let items = Array.from(xml.querySelectorAll("item"));
-
-  // 🔥 SORT TERBARU KE PALING LAMA
-  items.sort((a, b) => {
-    const dateA = new Date(a.querySelector("pubDate")?.textContent || 0);
-    const dateB = new Date(b.querySelector("pubDate")?.textContent || 0);
-    return dateB - dateA;
-  });
+fetch(apiUrl)
+.then(res => res.json())
+.then(data => {
 
   let html = "";
 
-  if(items.length === 0){
+  if(!data || data.length === 0){
     document.getElementById("news-container").innerHTML =
-    "<p>Tidak ada artikel di WordPress</p>";
+    "<p>Tidak ada artikel</p>";
     return;
   }
 
-  items.forEach(item => {
+  data.forEach(post => {
 
-    const title = item.querySelector("title")?.textContent || "No Title";
-    const link = item.querySelector("link")?.textContent || "#";
-    const desc = item.querySelector("description")?.textContent || "";
-
-    const clean = desc.replace(/<[^>]*>/g,'').substring(0,180);
+    const title = post.title.rendered;
+    const link = post.link;
+    const desc = post.excerpt.rendered.replace(/<[^>]*>/g,'').substring(0,180);
 
     html += `
       <div class="card">
         <h3>${title}</h3>
-        <p>${clean}...</p>
+        <p>${desc}...</p>
         <a href="${link}" target="_blank">Baca Selengkapnya</a>
       </div>
     `;
@@ -178,7 +163,7 @@ fetch(proxy)
 })
 .catch(err => {
   document.getElementById("news-container").innerHTML =
-  "<p>RSS gagal dimuat (cek koneksi / proxy error)</p>";
+  "<p>Gagal memuat artikel WordPress API</p>";
 });
 </script>
 
