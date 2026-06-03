@@ -154,12 +154,12 @@ fetch(rssUrl)
     const link = item.querySelector("link")?.textContent || "#";
     const desc = item.querySelector("description")?.textContent || "";
 
-    const cleanDesc = desc.replace(/<[^>]*>/g,'').substring(0,180);
+    const clean = desc.replace(/<[^>]*>/g,'').substring(0,180);
 
     html += `
       <div class="card">
         <h3>${title}</h3>
-        <p>${cleanDesc}...</p>
+        <p>${clean}...</p>
         <a href="${link}" target="_blank">Baca Selengkapnya</a>
       </div>
     `;
@@ -170,7 +170,7 @@ fetch(rssUrl)
 })
 .catch(err => {
   document.getElementById("news-container").innerHTML =
-  "<p>Gagal memuat RSS WordPress</p>";
+  "<p>Gagal memuat RSS WordPress (cek koneksi / RSS)</p>";
 });
 </script>
 
