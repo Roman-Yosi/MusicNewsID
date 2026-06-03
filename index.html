@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>MusicNewsID - Berita Musik Indonesia</title>
-<link rel="stylesheet" href="style.css">
+<meta name="description" content="MusicNewsID - Portal berita musik Indonesia terbaru dari Blogger">
+<meta name="robots" content="index, follow">
 
 <style>
 body{
@@ -47,13 +49,13 @@ nav a:hover{
 
 .hero{
   text-align:center;
-  padding:70px 20px;
+  padding:60px 20px;
   background:linear-gradient(45deg,#111,#222);
 }
 
 .hero h1{
   margin:0;
-  font-size:34px;
+  font-size:32px;
 }
 
 .hero p{
@@ -70,11 +72,11 @@ nav a:hover{
   background:#1a1a1a;
   padding:20px;
   border-radius:10px;
-  margin-bottom:20px;
+  margin-bottom:15px;
 }
 
 .card h3{
-  margin-top:0;
+  margin:0 0 10px;
 }
 
 .card p{
@@ -85,10 +87,6 @@ nav a:hover{
   color:#ffcc00;
   text-decoration:none;
   font-weight:bold;
-}
-
-.card a:hover{
-  text-decoration:underline;
 }
 
 footer{
@@ -109,19 +107,19 @@ footer{
 
 <header>
   <div class="logo">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID">
+    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
     <span>MusicNewsID</span>
   </div>
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="https://musicnewsid.blogspot.com/" target="_blank">Admin Blogger</a>
+    <a href="https://musicnewsid.blogspot.com/" target="_blank">Blogger Admin</a>
   </nav>
 </header>
 
 <section class="hero">
   <h1>Berita Musik Indonesia Terbaru</h1>
-  <p>Semua artikel otomatis terhubung dari Blogger MusicNewsID</p>
+  <p>Semua artikel otomatis dari Blogger</p>
 </section>
 
 <section class="container">
@@ -140,27 +138,17 @@ footer{
 const feedUrl =
 "https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=10&callback=loadPosts";
 
-let timeout = setTimeout(() => {
-  document.getElementById("news-container").innerHTML =
-    "<p>Gagal memuat artikel (timeout)</p>";
-}, 8000);
-
 function loadPosts(data){
-
-  clearTimeout(timeout);
 
   let html = "";
 
   if(!data || !data.feed || !data.feed.entry){
     document.getElementById("news-container").innerHTML =
-      "<p>Belum ada artikel.</p>";
+      "<p>Tidak ada artikel</p>";
     return;
   }
 
-  // 🔥 urutkan terbaru (aman)
-  const posts = data.feed.entry.reverse();
-
-  posts.forEach(post => {
+  data.feed.entry.forEach(post => {
 
     const title = post.title?.$t || "No Title";
 
@@ -181,11 +169,7 @@ function loadPosts(data){
       content = post.content.$t;
     }
 
-    if(content){
-      content = content.replace(/<[^>]*>/g,'').substring(0,180);
-    } else {
-      content = "";
-    }
+    content = content.replace(/<[^>]*>/g,'').substring(0,180);
 
     html += `
       <div class="card">
@@ -199,14 +183,9 @@ function loadPosts(data){
   document.getElementById("news-container").innerHTML = html;
 }
 
-// inject script JSONP Blogger
+// load script Blogger (JSONP)
 const script = document.createElement("script");
 script.src = feedUrl;
-script.onerror = () => {
-  document.getElementById("news-container").innerHTML =
-    "<p>Gagal koneksi ke Blogger</p>";
-};
-
 document.body.appendChild(script);
 </script>
 
