@@ -1,10 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MusicNewsID</title>
+<title>MusicNewsID - Berita Musik Indonesia</title>
+<link rel="stylesheet" href="style.css">
 
 <style>
 body{
@@ -14,12 +15,11 @@ body{
   color:#fff;
 }
 
-/* HEADER */
 header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:15px;
+  padding:15px 20px;
   background:#111;
 }
 
@@ -27,35 +27,55 @@ header{
   display:flex;
   align-items:center;
   gap:10px;
+  font-weight:bold;
+  font-size:20px;
 }
 
 .logo img{
-  height:35px;
+  height:40px;
 }
 
 nav a{
-  color:#fff;
+  color:white;
   text-decoration:none;
-  margin-left:10px;
+  margin-left:15px;
+  font-weight:500;
 }
 
-/* HERO */
+nav a:hover{
+  color:#ffcc00;
+}
+
 .hero{
   text-align:center;
-  padding:40px 20px;
-  background:#1a1a1a;
+  padding:70px 20px;
+  background:linear-gradient(45deg,#111,#222);
 }
 
-/* POST */
+.hero h1{
+  margin:0;
+  font-size:34px;
+}
+
+.hero p{
+  color:#ccc;
+}
+
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+
 .card{
-  background:#1e1e1e;
-  margin:10px;
-  padding:15px;
-  border-radius:8px;
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
 }
 
 .card h3{
-  margin:0 0 10px;
+  margin-top:0;
 }
 
 .card p{
@@ -65,13 +85,19 @@ nav a{
 .card a{
   color:#ffcc00;
   text-decoration:none;
+  font-weight:bold;
 }
 
-/* FOOTER */
+.card a:hover{
+  text-decoration:underline;
+}
+
 footer{
   text-align:center;
   padding:20px;
+  background:#111;
   color:#aaa;
+  margin-top:40px;
 }
 </style>
 </head>
@@ -80,70 +106,88 @@ footer{
 
 <header>
   <div class="logo">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
-    <strong>MusicNewsID</strong>
+    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png" alt="MusicNewsID">
+    <span>MusicNewsID</span>
   </div>
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="https://musicnewsid.blogspot.com/">Blogger</a>
+    <a href="https://musicnewsid.blogspot.com/" target="_blank">Admin Blogger</a>
   </nav>
 </header>
 
-<div class="hero">
-  <h2>Berita Musik Indonesia</h2>
-  <p>Semua artikel dari Blogger</p>
-</div>
+<section class="hero">
+  <h1>Berita Musik Indonesia Terbaru</h1>
+  <p>Semua artikel otomatis terhubung dari Blogger MusicNewsID</p>
+</section>
 
-<div id="posts">
-  <div class="card">Memuat artikel...</div>
-</div>
+<section class="container">
+  <h2>🔥 Berita Terbaru</h2>
+
+  <div id="news-container">
+    <p>Memuat artikel...</p>
+  </div>
+</section>
 
 <footer>
-  © 2026 MusicNewsID
+  © 2026 MusicNewsID - All Rights Reserved
 </footer>
 
 <script>
-const url = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=10&callback=load";
+const feedUrl =
+'https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&callback=loadPosts';
 
-function load(data){
+function loadPosts(data){
 
   let html = "";
 
   if(!data.feed.entry){
-    document.getElementById("posts").innerHTML =
-      "<div class='card'>Tidak ada artikel</div>";
+    document.getElementById("news-container").innerHTML =
+      "<p>Belum ada artikel.</p>";
     return;
   }
 
   data.feed.entry.forEach(post => {
 
     let title = post.title.$t;
-    let link = "#";
 
-    post.link.forEach(l=>{
-      if(l.rel === "alternate") link = l.href;
+    let link = "#";
+    post.link.forEach(item=>{
+      if(item.rel === "alternate"){
+        link = item.href;
+      }
     });
 
-    let content = post.summary ? post.summary.$t : "";
-    content = content.replace(/<[^>]*>/g,'').substring(0,150);
+    let content = "";
+
+    if(post.summary){
+      content = post.summary.$t;
+    }else if(post.content){
+      content = post.content.$t;
+    }
+
+    content = content.replace(/<[^>]*>/g,'');
+    content = content.substring(0,200) + "...";
 
     html += `
       <div class="card">
         <h3>${title}</h3>
-        <p>${content}...</p>
-        <a href="${link}" target="_blank">Baca Selengkapnya</a>
+        <p>${content}</p>
+        <a href="${link}" target="_blank">
+          Baca Selengkapnya
+        </a>
       </div>
     `;
   });
 
-  document.getElementById("posts").innerHTML = html;
+  document.getElementById("news-container").innerHTML = html;
 }
 
-const s = document.createElement("script");
-s.src = url;
-document.body.appendChild(s);
+const script = document.createElement("script");
+script.src = feedUrl;
+document.body.appendChild(script);
 </script>
 
 </body>
 </html>
+```
