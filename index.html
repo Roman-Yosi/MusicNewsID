@@ -25,45 +25,50 @@
 async function loadBlog() {
   try {
 
-    // FEED YANG PALING STABIL (JANGAN ALT JSON)
-    const rssFeed = "https://musicnewsid.blogspot.com/feeds/posts/default";
+    // 🔥 FEED OFFICIAL BLOGGER (PALING STABIL)
+    const url = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=atom";
 
-    // RSS to JSON converter (lebih stabil dari fetch langsung)
-    const apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssFeed);
+    const res = await fetch(url);
+    const xmlText = await res.text();
 
-    const res = await fetch(apiUrl);
-    const data = await res.json();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlText, "text/xml");
 
-    console.log("FEED DATA:", data);
+    const entries = xml.getElementsByTagName("entry");
 
-    if (!data.items || data.items.length === 0) {
-      document.getElementById("blog").innerHTML = "Tidak ada artikel ditemukan.";
+    if (!entries.length) {
+      document.getElementById("blog").innerHTML = "Tidak ada artikel.";
       return;
     }
 
     let html = "";
 
-    data.items.forEach(post => {
+    for (let i = 0; i < entries.length; i++) {
 
-      let title = post.title;
-      let content = post.content || post.description || "";
+      let title = entries[i].getElementsByTagName("title")[0].textContent;
+
+      let content = entries[i].getElementsByTagName("content")[0]?.textContent ||
+                    entries[i].getElementsByTagName("summary")[0]?.textContent ||
+                    "";
 
       // bersihkan HTML
-      let clean = content.replace(/<[^>]*>/g, '');
+      let clean = content.replace(/<[^>]*>/g,'');
+
+      let link = entries[i].getElementsByTagName("link")[0].getAttribute("href");
 
       html += `
         <div class="post">
-          <h3>${title}</h3>
-          <p>${clean.substring(0, 200)}...</p>
-          <a href="${post.link}" target="_blank">Baca Selengkapnya</a>
+          <h2>${title}</h2>
+          <p>${clean.substring(0, 220)}...</p>
+          <a href="${link}" target="_blank">Baca Selengkapnya</a>
         </div>
       `;
-    });
+    }
 
     document.getElementById("blog").innerHTML = html;
 
-  } catch (error) {
-    console.log("ERROR FEED:", error);
+  } catch (err) {
+    console.log(err);
     document.getElementById("blog").innerHTML = "Gagal memuat artikel dari Blogger.";
   }
 }
