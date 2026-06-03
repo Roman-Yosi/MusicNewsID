@@ -23,34 +23,48 @@
 
   <h1>Berita Terbaru</h1>
 
-  <div id="news"></div>
+  <div id="news">Memuat artikel...</div>
 
 </section>
 
 <script>
 async function loadBlog() {
-  const res = await fetch("https://musicnewsid.blogspot.com/feeds/posts/default?alt=json");
-  const data = await res.json();
+  try {
 
-  const posts = data.feed.entry;
-  let html = "";
+    const rss = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=rss";
+    const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss);
 
-  posts.forEach(post => {
-    let title = post.title.$t;
-    let content = post.content.$t;
+    const res = await fetch(api);
+    const data = await res.json();
 
-    // hapus tag HTML
-    let clean = content.replace(/<[^>]*>/g, "");
+    let html = "";
 
-    html += `
-      <div class="card">
-        <h2>${title}</h2>
-        <p>${clean.substring(0, 180)}...</p>
-      </div>
-    `;
-  });
+    if (!data.items || data.items.length === 0) {
+      document.getElementById("news").innerHTML = "Belum ada artikel.";
+      return;
+    }
 
-  document.getElementById("news").innerHTML = html;
+    data.items.forEach(post => {
+
+      let title = post.title;
+      let desc = post.description.replace(/<[^>]*>/g,'');
+      let link = post.link;
+
+      html += `
+        <div class="card">
+          <h2>${title}</h2>
+          <p>${desc.substring(0, 180)}...</p>
+          <a href="${link}" target="_blank">Baca Selengkapnya</a>
+        </div>
+      `;
+    });
+
+    document.getElementById("news").innerHTML = html;
+
+  } catch (err) {
+    console.log(err);
+    document.getElementById("news").innerHTML = "Gagal memuat artikel.";
+  }
 }
 
 loadBlog();
