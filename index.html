@@ -1,141 +1,62 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Website Saya</title>
-
-<link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MusicNewsID</title>
 
 <style>
-/* ===== RESET ===== */
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
 body{
+  margin:0;
+  font-family:Arial;
   background:#0f0f0f;
   color:#fff;
-  line-height:1.6;
 }
 
-/* ===== HEADER ===== */
 header{
-  position:sticky;
-  top:0;
   background:#000;
   padding:15px;
   text-align:center;
+  font-size:22px;
+  font-weight:bold;
   border-bottom:2px solid #111;
 }
 
-header h1{
-  font-size:22px;
-  margin-bottom:10px;
-}
-
-/* NAV */
-nav ul{
-  list-style:none;
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-nav a{
-  color:#bbb;
-  text-decoration:none;
-  font-size:14px;
-  padding:6px 10px;
-  border-radius:6px;
-  transition:0.3s;
-}
-
-nav a:hover,
-nav a.active{
-  background:#00d9ff;
-  color:#000;
-}
-
-/* ===== MAIN ===== */
-main{
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:15px;
   padding:20px;
-  max-width:900px;
-  margin:auto;
 }
 
-/* SECTION */
-section{
-  margin-bottom:40px;
+.card{
   background:#1a1a1a;
-  padding:20px;
   border-radius:12px;
+  overflow:hidden;
   border:1px solid #222;
+  transition:0.3s;
+  padding:12px;
 }
 
-section h2{
-  color:#00d9ff;
-  margin-bottom:10px;
-}
-
-/* FORM */
-form{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-input, textarea{
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  outline:none;
-  background:#111;
-  color:#fff;
-  border:1px solid #333;
-}
-
-input:focus, textarea:focus{
+.card:hover{
+  transform:scale(1.02);
   border-color:#00d9ff;
 }
 
-button{
-  padding:10px;
-  background:#00d9ff;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
-  transition:0.3s;
+.card h3{
+  color:#00d9ff;
+  font-size:15px;
+  margin-bottom:8px;
 }
 
-button:hover{
-  background:#00b2d1;
-}
-
-/* FOOTER */
-footer{
-  text-align:center;
-  padding:20px;
-  background:#000;
-  border-top:2px solid #111;
-  color:#777;
+.card p{
   font-size:13px;
+  color:#bbb;
 }
 
-/* RESPONSIVE */
-@media(max-width:600px){
-  header h1{
-    font-size:18px;
-  }
-
-  nav ul{
-    gap:10px;
-  }
+a{
+  color:#00d9ff;
+  text-decoration:none;
 }
 </style>
 
@@ -143,47 +64,55 @@ footer{
 
 <body>
 
-<header>
-  <h1>Selamat Datang di Website Saya</h1>
+<header>MusicNewsID</header>
 
-  <nav>
-    <ul>
-      <li><a href="#home" class="active">Beranda</a></li>
-      <li><a href="#about">Tentang</a></li>
-      <li><a href="#contact">Kontak</a></li>
-    </ul>
-  </nav>
-</header>
+<div class="container" id="news">Loading berita...</div>
 
-<main>
+<script>
 
-  <section id="home">
-    <h2>Beranda</h2>
-    <p>Ini adalah website modern sederhana yang sudah dioptimalkan untuk tampilan mobile dan desktop.</p>
-  </section>
+// 🔥 WORDPRESS RSS (PALING STABIL)
+const rssURL = "https://romanyosi5.wordpress.com/feed/";
 
-  <section id="about">
-    <h2>Tentang Saya</h2>
-    <p>Saya adalah pengembang web yang sedang membangun website modern, cepat, dan responsif dengan HTML dan CSS.</p>
-  </section>
+fetch(rssURL)
+.then(res => res.text())
+.then(str => {
 
-  <section id="contact">
-    <h2>Kontak</h2>
+  let parser = new DOMParser();
+  let xml = parser.parseFromString(str, "text/xml");
 
-    <form>
-      <input type="text" placeholder="Nama Anda" required />
-      <input type="email" placeholder="Email Anda" required />
-      <textarea rows="5" placeholder="Tulis pesan Anda..." required></textarea>
-      <button type="submit">Kirim Pesan</button>
-    </form>
+  let items = xml.querySelectorAll("item");
 
-  </section>
+  let html = "";
 
-</main>
+  items.forEach(item => {
 
-<footer>
-  &copy; 2026 Website Saya. All rights reserved.
-</footer>
+    let title = item.querySelector("title")?.textContent || "";
+    let link = item.querySelector("link")?.textContent || "";
+    let desc = item.querySelector("description")?.textContent || "";
+
+    // bersihkan HTML
+    desc = desc.replace(/<[^>]*>/g, "");
+
+    html += `
+      <div class="card">
+        <a href="${link}" target="_blank">
+          <h3>${title}</h3>
+        </a>
+        <p>${desc.slice(0,150)}...</p>
+      </div>
+    `;
+  });
+
+  document.getElementById("news").innerHTML = html;
+
+})
+.catch(err => {
+  console.log(err);
+  document.getElementById("news").innerHTML =
+  "❌ Gagal memuat artikel WordPress";
+});
+
+</script>
 
 </body>
 </html>
