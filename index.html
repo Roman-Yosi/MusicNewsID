@@ -1,59 +1,35 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MusicNewsID</title>
-
-  <link rel="stylesheet" href="style.css">
-
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-</head>
-
-<body>
-
-<header class="header">
-  <div class="logo">MusicNewsID</div>
-
-  <nav class="nav">
-    <a href="#">HOME</a>
-    <a href="#">MUSIC</a>
-    <a href="#">TRENDING</a>
-  </nav>
-</header>
-
-<main class="container">
-
-  <h1>Berita Terbaru</h1>
-
-  <div id="news" class="grid">Memuat artikel...</div>
-
-</main>
-
-<script>
 async function loadBlog() {
   try {
 
-    const rss = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=rss&nocache=" + Date.now();
-    const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss);
+    const rss = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=rss";
 
-    const res = await fetch(api);
+    // ⚡ paksa anti-cache + bypass RSS2JSON cache
+    const api =
+      "https://api.rss2json.com/v1/api.json?rss_url=" +
+      encodeURIComponent(rss) +
+      "&nocache=" +
+      Date.now();
+
+    const res = await fetch(api, { cache: "no-store" });
     const data = await res.json();
 
     let html = "";
 
     if (!data.items || data.items.length === 0) {
-      document.getElementById("news").innerHTML = "Belum ada artikel.";
+      document.getElementById("news").innerHTML =
+        "Belum ada artikel.";
       return;
     }
+
+    // 🔥 pastikan urutan terbaru di atas
+    data.items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
     data.items.forEach(post => {
 
       let title = post.title || "Tanpa Judul";
 
-      // FIX: ambil teks bersih saja
       let desc = post.description
-        ? post.description.replace(/<[^>]*>/g,'')
+        ? post.description.replace(/<[^>]*>/g, '')
         : "";
 
       let link = post.link;
@@ -71,12 +47,9 @@ async function loadBlog() {
 
   } catch (err) {
     console.log(err);
-    document.getElementById("news").innerHTML = "Gagal memuat artikel.";
+    document.getElementById("news").innerHTML =
+      "Gagal memuat artikel.";
   }
 }
 
 loadBlog();
-</script>
-
-</body>
-</html>
