@@ -1,83 +1,54 @@
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
-  background: #0f0f0f;
-  color: white;
+  margin: 0;
+  background: #f4f4f4;
 }
 
-/* HEADER */
 header {
   background: #111;
-  padding: 12px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #222;
+  color: white;
+  padding: 15px;
+  text-align: center;
 }
 
-/* LOGO FIX (NEWS STYLE PROFESSIONAL) */
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
+  font-size: 22px;
   font-weight: bold;
-  color: #ffcc00;
+  margin-bottom: 10px;
 }
 
-/* LOGO IMAGE FIX (ANTI KEBESARAN) */
-.logo img {
-  height: 28px;        /* ukuran kecil profesional */
-  max-height: 32px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-}
-
-/* NAV */
 nav a {
   color: white;
-  margin-left: 15px;
+  margin: 0 10px;
   text-decoration: none;
   font-size: 14px;
 }
 
-nav a:hover {
-  color: #ffcc00;
-}
-
-/* HERO */
-.hero {
-  text-align: center;
-  padding: 60px 20px;
-  background: linear-gradient(45deg, #111, #222);
-}
-
-.hero h1 {
-  font-size: 32px;
-}
-
-/* CONTAINER */
 .container {
-  padding: 20px;
+  width: 90%;
+  max-width: 900px;
+  margin: 20px auto;
 }
 
-/* CARD */
+h1 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
 .card {
-  background: #1c1c1c;
+  background: white;
   padding: 15px;
-  margin: 15px 0;
-  border-radius: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.card a {
-  color: #ffcc00;
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
-/* FOOTER */
-footer {
-  text-align: center;
-  padding: 20px;
-  background: #111;
-  margin-top: 40px;
+.card p {
+  font-size: 14px;
+  color: #444;
 }
