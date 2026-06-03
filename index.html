@@ -3,14 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MusicNewsID</title>
+  <title>MusicNewsID - Portal Berita Musik</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- anti cache -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 </head>
 
 <body>
 
 <header>
-  <div class="logo">MusicNews</div>
+  <div class="logo">MusicNewsID</div>
 
   <nav>
     <a href="#">HOME</a>
@@ -31,7 +36,7 @@
 async function loadBlog() {
   try {
 
-    const rss = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=rss";
+    const rss = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=rss&nocache=" + Date.now();
     const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rss);
 
     const res = await fetch(api);
@@ -46,16 +51,16 @@ async function loadBlog() {
 
     data.items.forEach(post => {
 
-      let title = post.title;
-      let desc = post.description.replace(/<[^>]*>/g,'');
-      let link = post.link;
+      let title = post.title || "Tanpa Judul";
+      let desc = post.description ? post.description.replace(/<[^>]*>/g,'') : "";
+      let link = post.link || "#";
 
       html += `
-        <div class="card">
+        <article class="card">
           <h2>${title}</h2>
-          <p>${desc.substring(0, 180)}...</p>
-          <a href="${link}" target="_blank">Baca Selengkapnya</a>
-        </div>
+          <p>${desc.substring(0, 160)}...</p>
+          <a href="${link}" target="_blank">Baca Selengkapnya →</a>
+        </article>
       `;
     });
 
