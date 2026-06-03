@@ -10,20 +10,20 @@
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f5f5f5;
+  background:#fff;
+  color:#111;
 }
 
-/* HEADER ala Blogger */
+/* HEADER */
 header{
   background:#111;
   color:#fff;
-  padding:10px 12px;
+  padding:10px 15px;
   display:flex;
   align-items:center;
-  gap:10px;
+  justify-content:space-between;
 }
 
-/* LOGO kecil seperti Blogger */
 header img{
   width:28px;
   height:28px;
@@ -31,61 +31,63 @@ header img{
 }
 
 header span{
-  font-size:16px;
   font-weight:bold;
 }
 
-/* FEED */
-.feed{
-  max-width:650px;
-  margin:auto;
+/* NAV */
+.nav{
+  background:#1a1a1a;
+  color:#fff;
   padding:10px;
+  font-size:14px;
 }
 
-/* CARD */
+/* CONTAINER */
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:15px;
+}
+
+/* POST STYLE (SEPERTI BLOGGER) */
 .post{
-  background:#fff;
-  margin-bottom:12px;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom:35px;
+  border-bottom:1px solid #ddd;
+  padding-bottom:25px;
 }
 
-/* GAMBAR HARUS BESAR DI DEPAN */
-.post img{
-  width:100%;
-  height:220px;
-  object-fit:cover;
-  background:#ddd;
+.post h1{
+  font-size:22px;
+  margin:10px 0;
+}
+
+.date{
+  font-size:12px;
+  color:#777;
+  margin-bottom:10px;
+}
+
+/* BREAKING */
+.breaking{
+  background:#ffefc2;
+  padding:10px;
+  font-size:14px;
+  margin-bottom:15px;
+  border-left:4px solid #ff9900;
 }
 
 /* CONTENT */
 .content{
-  padding:12px;
+  font-size:15px;
+  line-height:1.6;
+  color:#222;
 }
 
-.title{
-  font-size:16px;
-  font-weight:bold;
-  margin:0 0 6px;
-}
-
-.desc{
-  font-size:13px;
-  color:#444;
-}
-
-.read{
-  display:inline-block;
-  margin-top:8px;
-  color:#1a73e8;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-.loading{
+/* FOOTER */
+footer{
   text-align:center;
   padding:20px;
+  font-size:12px;
   color:#777;
 }
 </style>
@@ -93,15 +95,24 @@ header span{
 
 <body>
 
-<!-- HEADER BLOGGER STYLE -->
 <header>
-  <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
-  <span>MusicNewsID</span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
+    <span>MusicNewsID</span>
+  </div>
 </header>
 
-<div class="feed" id="feed">
-  <div class="loading">Memuat artikel...</div>
+<div class="nav">
+  Home | Music | Trending
 </div>
+
+<div class="container" id="posts">
+  <p>Memuat artikel...</p>
+</div>
+
+<footer>
+© 2026 MusicNewsID
+</footer>
 
 <script>
 const url =
@@ -112,47 +123,48 @@ function load(data){
   let html = "";
 
   if(!data.feed.entry){
-    document.getElementById("feed").innerHTML =
-      "<div class='loading'>Tidak ada artikel</div>";
+    document.getElementById("posts").innerHTML =
+    "<p>Tidak ada postingan</p>";
     return;
   }
 
-  data.feed.entry.forEach(post => {
+  data.feed.entry.forEach((post, index) => {
 
-    const title = post.title?.$t || "No Title";
+    const title = post.title.$t;
 
     let link = "#";
     post.link.forEach(l=>{
       if(l.rel==="alternate") link = l.href;
     });
 
-    let content = post.summary?.$t || post.content?.$t || "";
-    content = content.replace(/<[^>]*>/g,'').substring(0,120);
+    let content = post.content?.$t || post.summary?.$t || "";
+    let clean = content.replace(/<[^>]*>/g,'').substring(0,800);
 
-    /* 🔥 FIX GAMBAR (INI YANG SELALU ERROR DI VERSI KAMU) */
-    let img = "";
+    let date = post.published?.$t || "";
 
-    if(post.media$thumbnail){
-      img = post.media$thumbnail.url.replace("s72-c","s600");
-    } else {
-      /* fallback ambil gambar dari konten */
-      let match = post.content?.$t?.match(/<img[^>]+src="([^">]+)"/);
-      img = match ? match[1] : "https://via.placeholder.com/600x300?text=MusicNewsID";
+    // BREAKING POST (POST TERATAS)
+    let breaking = "";
+    if(index === 0){
+      breaking = `<div class="breaking">🔥 BREAKING: ${title}</div>`;
     }
 
     html += `
       <div class="post">
-        <img src="${img}">
+        ${breaking}
+        <h1><a href="${link}" target="_blank" style="color:#111;text-decoration:none;">
+          ${title}
+        </a></h1>
+
+        <div class="date">${date}</div>
+
         <div class="content">
-          <div class="title">${title}</div>
-          <div class="desc">${content}...</div>
-          <a class="read" href="${link}" target="_blank">Baca Selengkapnya</a>
+          ${clean}
         </div>
       </div>
     `;
   });
 
-  document.getElementById("feed").innerHTML = html;
+  document.getElementById("posts").innerHTML = html;
 }
 
 const s = document.createElement("script");
