@@ -4,101 +4,75 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MusicNewsID - Berita Musik Indonesia</title>
-<meta name="description" content="MusicNewsID - Portal berita musik Indonesia terbaru dari Blogger">
-<meta name="robots" content="index, follow">
+<title>MusicNewsID</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#0f0f0f;
-  color:#fff;
+  background:#f1f1f1;
+  color:#111;
 }
 
+/* HEADER mirip Blogger */
 header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 20px;
   background:#111;
+  color:#fff;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
 .logo{
   display:flex;
   align-items:center;
   gap:10px;
-  font-weight:bold;
-  font-size:20px;
 }
 
 .logo img{
-  height:40px;
+  height:35px;
 }
 
-nav a{
-  color:white;
-  text-decoration:none;
-  margin-left:15px;
-  font-weight:500;
-}
-
-nav a:hover{
-  color:#ffcc00;
-}
-
+/* HERO */
 .hero{
+  background:#fff;
+  padding:20px;
   text-align:center;
-  padding:60px 20px;
-  background:linear-gradient(45deg,#111,#222);
 }
 
-.hero h1{
-  margin:0;
-  font-size:32px;
+/* POST STYLE (mirip Blogger m=1) */
+.post{
+  background:#fff;
+  margin:10px;
+  padding:15px;
+  border-radius:8px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-.hero p{
-  color:#ccc;
-}
-
-.container{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-}
-
-.card{
-  background:#1a1a1a;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:15px;
-}
-
-.card h3{
+.post h3{
   margin:0 0 10px;
+  font-size:18px;
 }
 
-.card p{
-  color:#ccc;
+.post p{
+  color:#444;
+  font-size:14px;
 }
 
-.card a{
-  color:#ffcc00;
+.post a{
+  display:inline-block;
+  margin-top:10px;
+  color:#1a73e8;
   text-decoration:none;
-  font-weight:bold;
 }
 
+/* FOOTER */
 footer{
   text-align:center;
   padding:20px;
-  background:#111;
-  color:#aaa;
-  margin-top:40px;
-}
-
-.loading{
-  color:#aaa;
+  font-size:12px;
+  color:#777;
 }
 </style>
 </head>
@@ -108,85 +82,67 @@ footer{
 <header>
   <div class="logo">
     <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
-    <span>MusicNewsID</span>
+    <strong>MusicNewsID</strong>
   </div>
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="https://musicnewsid.blogspot.com/" target="_blank">Blogger Admin</a>
-  </nav>
+  <a href="https://musicnewsid.blogspot.com/" style="color:#fff;text-decoration:none;">Blogger</a>
 </header>
 
-<section class="hero">
-  <h1>Berita Musik Indonesia Terbaru</h1>
-  <p>Semua artikel otomatis dari Blogger</p>
-</section>
+<div class="hero">
+  <h2>Berita Musik Indonesia</h2>
+  <p>Update otomatis dari Blogger</p>
+</div>
 
-<section class="container">
-  <h2>🔥 Berita Terbaru</h2>
-
-  <div id="news-container">
-    <p class="loading">Memuat artikel...</p>
-  </div>
-</section>
+<div id="posts">
+  <div class="post">Memuat artikel...</div>
+</div>
 
 <footer>
-  © 2026 MusicNewsID - All Rights Reserved
+  © 2026 MusicNewsID
 </footer>
 
 <script>
-const feedUrl =
-"https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=10&callback=loadPosts";
+const url = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=10&callback=load";
 
-function loadPosts(data){
+function load(data){
 
   let html = "";
 
-  if(!data || !data.feed || !data.feed.entry){
-    document.getElementById("news-container").innerHTML =
-      "<p>Tidak ada artikel</p>";
+  if(!data.feed.entry){
+    document.getElementById("posts").innerHTML =
+      "<div class='post'>Tidak ada artikel</div>";
     return;
   }
 
-  data.feed.entry.forEach(post => {
+  data.feed.entry.forEach(p => {
 
-    const title = post.title?.$t || "No Title";
-
+    let title = p.title.$t;
     let link = "#";
-    if(post.link){
-      post.link.forEach(item=>{
-        if(item.rel === "alternate"){
-          link = item.href;
-        }
-      });
-    }
+
+    p.link.forEach(l=>{
+      if(l.rel==="alternate") link = l.href;
+    });
 
     let content = "";
+    if(p.summary) content = p.summary.$t;
 
-    if(post.summary){
-      content = post.summary.$t;
-    } else if(post.content){
-      content = post.content.$t;
-    }
-
-    content = content.replace(/<[^>]*>/g,'').substring(0,180);
+    content = content.replace(/<[^>]*>/g,'').substring(0,150);
 
     html += `
-      <div class="card">
+      <div class="post">
         <h3>${title}</h3>
         <p>${content}...</p>
-        <a href="${link}" target="_blank">Baca Selengkapnya</a>
+        <a href="${link}" target="_blank">Baca</a>
       </div>
     `;
   });
 
-  document.getElementById("news-container").innerHTML = html;
+  document.getElementById("posts").innerHTML = html;
 }
 
-// load script Blogger (JSONP)
-const script = document.createElement("script");
-script.src = feedUrl;
-document.body.appendChild(script);
+const s = document.createElement("script");
+s.src = url;
+document.body.appendChild(s);
 </script>
 
 </body>
