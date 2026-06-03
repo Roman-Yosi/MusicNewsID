@@ -131,25 +131,41 @@ footer{
 <script>
 const rssUrl = "https://romanyosi5.wordpress.com/feed/";
 
-fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl))
-.then(res => res.json())
-.then(data => {
+fetch(rssUrl)
+.then(res => res.text())
+.then(str => {
 
-  let container = document.getElementById("news-container");
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(str, "text/xml");
+
+  const items = xml.querySelectorAll("item");
+
   let html = "";
 
-  data.items.forEach(item => {
+  if(items.length === 0){
+    document.getElementById("news-container").innerHTML =
+    "<p>Tidak ada artikel di WordPress</p>";
+    return;
+  }
+
+  items.forEach(item => {
+
+    const title = item.querySelector("title")?.textContent || "No Title";
+    const link = item.querySelector("link")?.textContent || "#";
+    const desc = item.querySelector("description")?.textContent || "";
+
+    const cleanDesc = desc.replace(/<[^>]*>/g,'').substring(0,180);
 
     html += `
       <div class="card">
-        <h3>${item.title}</h3>
-        <p>${item.description.replace(/<[^>]*>/g,'').substring(0,180)}...</p>
-        <a href="${item.link}" target="_blank">Baca Selengkapnya</a>
+        <h3>${title}</h3>
+        <p>${cleanDesc}...</p>
+        <a href="${link}" target="_blank">Baca Selengkapnya</a>
       </div>
     `;
   });
 
-  container.innerHTML = html;
+  document.getElementById("news-container").innerHTML = html;
 
 })
 .catch(err => {
