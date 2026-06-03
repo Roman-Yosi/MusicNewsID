@@ -1,88 +1,64 @@
-/* ===== RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
-  background: #f2f4f7;
-  color: #222;
-  line-height: 1.6;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f4f4;
 }
 
-/* ===== HEADER ===== */
 header {
-  background: #111827;
+  background: #111;
   color: white;
-  padding: 20px;
+  padding: 15px;
   text-align: center;
+}
+
+.logo {
   font-size: 24px;
   font-weight: bold;
-  letter-spacing: 1px;
 }
 
-/* ===== CONTAINER ===== */
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
 .container {
   width: 90%;
   max-width: 900px;
   margin: 20px auto;
 }
 
-/* ===== JUDUL SECTION ===== */
-h1, h2 {
+h1 {
+  font-size: 20px;
   margin-bottom: 15px;
 }
 
-/* ===== NEWS CARD ===== */
-.post {
-  background: #ffffff;
-  border-radius: 12px;
+.card {
+  background: white;
   padding: 15px;
   margin-bottom: 15px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  transition: 0.3s;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.post:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-}
-
-/* ===== TITLE ===== */
-.post h2 {
+.card h2 {
   font-size: 18px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.post h2 a {
+.card p {
+  font-size: 14px;
+  color: #444;
+}
+
+.card a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #007bff;
   text-decoration: none;
-  color: #111827;
-}
-
-.post h2 a:hover {
-  color: #2563eb;
-}
-
-/* ===== DATE ===== */
-.date {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  header {
-    font-size: 18px;
-    padding: 15px;
-  }
-
-  .container {
-    width: 95%;
-  }
-
-  .post h2 {
-    font-size: 16px;
-  }
 }
