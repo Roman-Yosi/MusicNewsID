@@ -10,68 +10,28 @@
 <body>
 
 <header>
-  <div class="logo">MusicNewsID</div>
+  MusicNewsID
 </header>
 
-<div class="container">
-
+<section class="container">
   <h2>Berita Terbaru</h2>
 
-  <div id="blog">Memuat artikel...</div>
+  <div class="card">
+    <h3><a href="post.html?id=1">Roman Yosi Rilis Lagu Baru</a></h3>
+    <p>Single terbaru resmi dirilis di semua platform.</p>
+  </div>
 
-</div>
+  <div class="card">
+    <h3><a href="post.html?id=2">Tren Musik Indonesia 2026</a></h3>
+    <p>Perkembangan musik digital semakin cepat.</p>
+  </div>
 
-<!-- JSONP SCRIPT (ANTI ERROR CORS) -->
-<script>
-function loadBlog(data) {
-  try {
+  <div class="card">
+    <h3><a href="post.html?id=3">Behind The Scene Studio</a></h3>
+    <p>Proses produksi musik profesional.</p>
+  </div>
 
-    let entries = data.feed.entry;
-    let html = "";
-
-    if (!entries) {
-      document.getElementById("blog").innerHTML = "Tidak ada artikel.";
-      return;
-    }
-
-    entries.forEach(post => {
-
-      let title = post.title.$t;
-
-      let content = post.content?.$t || post.summary?.$t || "";
-      let clean = content.replace(/<[^>]*>/g,'');
-
-      // ambil link
-      let link = "";
-      if (post.link) {
-        for (let i = 0; i < post.link.length; i++) {
-          if (post.link[i].rel === "alternate") {
-            link = post.link[i].href;
-            break;
-          }
-        }
-      }
-
-      html += `
-        <div class="post">
-          <h2>${title}</h2>
-          <p>${clean.substring(0, 200)}...</p>
-          <a href="${link}" target="_blank">Baca Selengkapnya</a>
-        </div>
-      `;
-    });
-
-    document.getElementById("blog").innerHTML = html;
-
-  } catch (err) {
-    console.log(err);
-    document.getElementById("blog").innerHTML = "Gagal memuat artikel dari Blogger.";
-  }
-}
-</script>
-
-<!-- CALL BLOGGER JSONP -->
-<script src="https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&callback=loadBlog"></script>
+</section>
 
 </body>
 </html>
