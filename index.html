@@ -14,24 +14,39 @@
 </header>
 
 <section class="container">
-  <h2>Berita Terbaru</h2>
+  <h2>Berita Terbaru (Auto RSS)</h2>
 
-  <div class="card">
-    <h3><a href="post.html?id=1">Roman Yosi Rilis Lagu Baru</a></h3>
-    <p>Single terbaru resmi dirilis di semua platform.</p>
-  </div>
-
-  <div class="card">
-    <h3><a href="post.html?id=2">Tren Musik Indonesia 2026</a></h3>
-    <p>Perkembangan musik digital semakin cepat.</p>
-  </div>
-
-  <div class="card">
-    <h3><a href="post.html?id=3">Behind The Scene Studio</a></h3>
-    <p>Proses produksi musik profesional.</p>
-  </div>
-
+  <div id="news">Loading artikel...</div>
 </section>
+
+<script>
+async function loadRSS() {
+  const rssUrl = "https://romanyosi5.wordpress.com/feed/";
+
+  const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
+
+  try {
+    const res = await fetch(api);
+    const data = await res.json();
+
+    if (!data.items) throw new Error("RSS tidak terbaca");
+
+    document.getElementById("news").innerHTML =
+      data.items.map(item => `
+        <div class="card">
+          <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+          <p>${item.description.replace(/<[^>]*>/g,'').substring(0,120)}...</p>
+        </div>
+      `).join("");
+
+  } catch (err) {
+    document.getElementById("news").innerHTML =
+      "<div class='card'>Gagal load RSS WordPress</div>";
+  }
+}
+
+loadRSS();
+</script>
 
 </body>
 </html>
