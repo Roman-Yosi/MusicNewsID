@@ -1,53 +1,189 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Contoh Halaman HTML dan CSS</title>
-    <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Website Saya</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<style>
+/* ===== RESET ===== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#0f0f0f;
+  color:#fff;
+  line-height:1.6;
+}
+
+/* ===== HEADER ===== */
+header{
+  position:sticky;
+  top:0;
+  background:#000;
+  padding:15px;
+  text-align:center;
+  border-bottom:2px solid #111;
+}
+
+header h1{
+  font-size:22px;
+  margin-bottom:10px;
+}
+
+/* NAV */
+nav ul{
+  list-style:none;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+nav a{
+  color:#bbb;
+  text-decoration:none;
+  font-size:14px;
+  padding:6px 10px;
+  border-radius:6px;
+  transition:0.3s;
+}
+
+nav a:hover,
+nav a.active{
+  background:#00d9ff;
+  color:#000;
+}
+
+/* ===== MAIN ===== */
+main{
+  padding:20px;
+  max-width:900px;
+  margin:auto;
+}
+
+/* SECTION */
+section{
+  margin-bottom:40px;
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:12px;
+  border:1px solid #222;
+}
+
+section h2{
+  color:#00d9ff;
+  margin-bottom:10px;
+}
+
+/* FORM */
+form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+input, textarea{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  outline:none;
+  background:#111;
+  color:#fff;
+  border:1px solid #333;
+}
+
+input:focus, textarea:focus{
+  border-color:#00d9ff;
+}
+
+button{
+  padding:10px;
+  background:#00d9ff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#00b2d1;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:20px;
+  background:#000;
+  border-top:2px solid #111;
+  color:#777;
+  font-size:13px;
+}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  header h1{
+    font-size:18px;
+  }
+
+  nav ul{
+    gap:10px;
+  }
+}
+</style>
+
 </head>
+
 <body>
-    <header>
-        <h1>Selamat Datang di Halaman Saya</h1>
-        <nav>
-            <ul>
-                <li><a href="#home" class="active">Beranda</a></li>
-                <li><a href="#about">Tentang</a></li>
-                <li><a href="#contact">Kontak</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <main>
-        <section id="home">
-            <h2>Beranda</h2>
-            <p>Ini adalah contoh halaman web sederhana dengan HTML dan CSS.</p>
-        </section>
+<header>
+  <h1>Selamat Datang di Website Saya</h1>
 
-        <section id="about">
-            <h2>Tentang Saya</h2>
-            <p>Saya seorang pengembang web yang sedang belajar membuat halaman yang menarik dan responsif.</p>
-        </section>
+  <nav>
+    <ul>
+      <li><a href="#home" class="active">Beranda</a></li>
+      <li><a href="#about">Tentang</a></li>
+      <li><a href="#contact">Kontak</a></li>
+    </ul>
+  </nav>
+</header>
 
-        <section id="contact">
-            <h2>Kontak</h2>
-            <form>
-                <label for="name">Nama:</label><br />
-                <input type="text" id="name" name="name" placeholder="Masukkan nama Anda" required /><br />
+<main>
 
-                <label for="email">Email:</label><br />
-                <input type="email" id="email" name="email" placeholder="Masukkan email Anda" required /><br />
+  <section id="home">
+    <h2>Beranda</h2>
+    <p>Ini adalah website modern sederhana yang sudah dioptimalkan untuk tampilan mobile dan desktop.</p>
+  </section>
 
-                <label for="message">Pesan:</label><br />
-                <textarea id="message" name="message" rows="4" placeholder="Tulis pesan Anda di sini..." required></textarea><br />
+  <section id="about">
+    <h2>Tentang Saya</h2>
+    <p>Saya adalah pengembang web yang sedang membangun website modern, cepat, dan responsif dengan HTML dan CSS.</p>
+  </section>
 
-                <button type="submit">Kirim</button>
-            </form>
-        </section>
-    </main>
+  <section id="contact">
+    <h2>Kontak</h2>
 
-    <footer>
-        <p>&copy; 2026 Contoh Halaman. Semua hak cipta dilindungi.</p>
-    </footer>
+    <form>
+      <input type="text" placeholder="Nama Anda" required />
+      <input type="email" placeholder="Email Anda" required />
+      <textarea rows="5" placeholder="Tulis pesan Anda..." required></textarea>
+      <button type="submit">Kirim Pesan</button>
+    </form>
+
+  </section>
+
+</main>
+
+<footer>
+  &copy; 2026 Website Saya. All rights reserved.
+</footer>
+
 </body>
 </html>
