@@ -3,172 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>MusicNewsID</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#fff;
-  color:#111;
+  background:#f1f1f1;
 }
 
-/* HEADER */
-header{
-  background:#111;
-  color:#fff;
+/* 🔥 TOP BAR seperti Blogger */
+.topbar{
+  background:#ff5722;
+  color:white;
   padding:10px 15px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  gap:10px;
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
-header img{
+/* LOGO */
+.topbar img{
   width:28px;
   height:28px;
-  border-radius:50%;
 }
 
-header span{
+/* TITLE */
+.topbar span{
   font-weight:bold;
+  font-size:16px;
 }
 
-/* NAV */
-.nav{
-  background:#1a1a1a;
-  color:#fff;
-  padding:10px;
+/* MENU */
+.menu{
+  margin-left:auto;
   font-size:14px;
 }
 
-/* CONTAINER */
-.container{
-  max-width:700px;
-  margin:auto;
-  padding:15px;
-}
-
-/* POST STYLE (SEPERTI BLOGGER) */
-.post{
-  margin-bottom:35px;
-  border-bottom:1px solid #ddd;
-  padding-bottom:25px;
-}
-
-.post h1{
-  font-size:22px;
-  margin:10px 0;
-}
-
-.date{
-  font-size:12px;
-  color:#777;
-  margin-bottom:10px;
-}
-
-/* BREAKING */
-.breaking{
-  background:#ffefc2;
-  padding:10px;
-  font-size:14px;
-  margin-bottom:15px;
-  border-left:4px solid #ff9900;
-}
-
-/* CONTENT */
-.content{
-  font-size:15px;
-  line-height:1.6;
-  color:#222;
-}
-
-/* FOOTER */
-footer{
-  text-align:center;
+/* HERO */
+.hero{
   padding:20px;
-  font-size:12px;
-  color:#777;
+  background:white;
+  text-align:left;
+}
+
+/* FEED */
+.container{
+  max-width:800px;
+  margin:auto;
+  padding:10px;
+}
+
+.post{
+  background:white;
+  margin-bottom:10px;
+  padding:15px;
+  border-radius:6px;
+}
+
+.post h3{
+  margin:0 0 10px 0;
+  font-size:18px;
+}
+
+.post p{
+  color:#444;
+  font-size:14px;
+}
+
+.post a{
+  color:#ff5722;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+.post img{
+  width:100%;
+  border-radius:6px;
+  margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <img src="https://raw.githubusercontent.com/Roman-Yosi/Logo-Brand-Musicos-Studio/refs/heads/main/MusicNewsId.png">
-    <span>MusicNewsID</span>
-  </div>
-</header>
+<!-- 🔥 HEADER BLOGGER STYLE -->
+<div class="topbar">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Blogger_icon.svg">
+  <span>MusicNewsID</span>
 
-<div class="nav">
-  Home | Music | Trending
+  <div class="menu">Home • Trending</div>
 </div>
 
-<div class="container" id="posts">
+<div class="hero">
+  <h2>🔥 Breaking News Musik Indonesia</h2>
+  <p>Update otomatis dari Blogger</p>
+</div>
+
+<div class="container" id="feed">
   <p>Memuat artikel...</p>
 </div>
 
-<footer>
-© 2026 MusicNewsID
-</footer>
-
 <script>
-const url =
+const feedUrl =
 "https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=10&callback=load";
 
 function load(data){
 
   let html = "";
 
-  if(!data.feed.entry){
-    document.getElementById("posts").innerHTML =
-    "<p>Tidak ada postingan</p>";
-    return;
-  }
+  data.feed.entry.forEach(post => {
 
-  data.feed.entry.forEach((post, index) => {
-
-    const title = post.title.$t;
+    let title = post.title.$t;
 
     let link = "#";
     post.link.forEach(l=>{
       if(l.rel==="alternate") link = l.href;
     });
 
-    let content = post.content?.$t || post.summary?.$t || "";
-    let clean = content.replace(/<[^>]*>/g,'').substring(0,800);
+    let content = post.summary?.$t || post.content?.$t || "";
+    content = content.replace(/<[^>]*>/g,'').substring(0,180);
 
-    let date = post.published?.$t || "";
-
-    // BREAKING POST (POST TERATAS)
-    let breaking = "";
-    if(index === 0){
-      breaking = `<div class="breaking">🔥 BREAKING: ${title}</div>`;
-    }
+    let img = "";
+    let match = (post.content?.$t || "").match(/<img[^>]+src="([^">]+)"/);
+    if(match) img = match[1];
 
     html += `
       <div class="post">
-        ${breaking}
-        <h1><a href="${link}" target="_blank" style="color:#111;text-decoration:none;">
-          ${title}
-        </a></h1>
-
-        <div class="date">${date}</div>
-
-        <div class="content">
-          ${clean}
-        </div>
+        ${img ? `<img src="${img}">` : ""}
+        <h3>${title}</h3>
+        <p>${content}...</p>
+        <a href="${link}" target="_blank">Baca Selengkapnya</a>
       </div>
     `;
   });
 
-  document.getElementById("posts").innerHTML = html;
+  document.getElementById("feed").innerHTML = html;
 }
 
 const s = document.createElement("script");
-s.src = url;
+s.src = feedUrl;
 document.body.appendChild(s);
 </script>
 
