@@ -139,11 +139,18 @@ fetch(proxy)
   const parser = new DOMParser();
   const xml = parser.parseFromString(str, "text/xml");
 
-  const items = xml.querySelectorAll("item");
+  let items = Array.from(xml.querySelectorAll("item"));
+
+  // 🔥 SORT TERBARU KE PALING LAMA
+  items.sort((a, b) => {
+    const dateA = new Date(a.querySelector("pubDate")?.textContent || 0);
+    const dateB = new Date(b.querySelector("pubDate")?.textContent || 0);
+    return dateB - dateA;
+  });
 
   let html = "";
 
-  if(!items || items.length === 0){
+  if(items.length === 0){
     document.getElementById("news-container").innerHTML =
     "<p>Tidak ada artikel di WordPress</p>";
     return;
@@ -171,7 +178,7 @@ fetch(proxy)
 })
 .catch(err => {
   document.getElementById("news-container").innerHTML =
-  "<p>RSS gagal dimuat (proxy error)</p>";
+  "<p>RSS gagal dimuat (cek koneksi / proxy error)</p>";
 });
 </script>
 
