@@ -21,49 +21,45 @@
 
 </div>
 
+<!-- JSONP SCRIPT (ANTI ERROR CORS) -->
 <script>
-async function loadBlog() {
+function loadBlog(data) {
   try {
 
-    // 🔥 FEED OFFICIAL BLOGGER (PALING STABIL)
-    const url = "https://musicnewsid.blogspot.com/feeds/posts/default?alt=atom";
+    let entries = data.feed.entry;
+    let html = "";
 
-    const res = await fetch(url);
-    const xmlText = await res.text();
-
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlText, "text/xml");
-
-    const entries = xml.getElementsByTagName("entry");
-
-    if (!entries.length) {
+    if (!entries) {
       document.getElementById("blog").innerHTML = "Tidak ada artikel.";
       return;
     }
 
-    let html = "";
+    entries.forEach(post => {
 
-    for (let i = 0; i < entries.length; i++) {
+      let title = post.title.$t;
 
-      let title = entries[i].getElementsByTagName("title")[0].textContent;
-
-      let content = entries[i].getElementsByTagName("content")[0]?.textContent ||
-                    entries[i].getElementsByTagName("summary")[0]?.textContent ||
-                    "";
-
-      // bersihkan HTML
+      let content = post.content?.$t || post.summary?.$t || "";
       let clean = content.replace(/<[^>]*>/g,'');
 
-      let link = entries[i].getElementsByTagName("link")[0].getAttribute("href");
+      // ambil link
+      let link = "";
+      if (post.link) {
+        for (let i = 0; i < post.link.length; i++) {
+          if (post.link[i].rel === "alternate") {
+            link = post.link[i].href;
+            break;
+          }
+        }
+      }
 
       html += `
         <div class="post">
           <h2>${title}</h2>
-          <p>${clean.substring(0, 220)}...</p>
+          <p>${clean.substring(0, 200)}...</p>
           <a href="${link}" target="_blank">Baca Selengkapnya</a>
         </div>
       `;
-    }
+    });
 
     document.getElementById("blog").innerHTML = html;
 
@@ -72,9 +68,10 @@ async function loadBlog() {
     document.getElementById("blog").innerHTML = "Gagal memuat artikel dari Blogger.";
   }
 }
-
-loadBlog();
 </script>
+
+<!-- CALL BLOGGER JSONP -->
+<script src="https://musicnewsid.blogspot.com/feeds/posts/default?alt=json-in-script&callback=loadBlog"></script>
 
 </body>
 </html>
