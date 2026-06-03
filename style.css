@@ -6,40 +6,37 @@
 }
 
 body {
-  background: #f3f4f6;
+  background: #eef2f7;
   color: #111;
 }
 
 /* ===== HEADER ===== */
-header {
-  background: #0f172a;
+.header {
+  background: #0b1220;
+  color: white;
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
-  flex-wrap: wrap;
 }
 
 .logo {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: bold;
-  letter-spacing: 1px;
 }
 
-nav {
+.nav {
   display: flex;
   gap: 15px;
 }
 
-nav a {
+.nav a {
   color: white;
   text-decoration: none;
   font-size: 14px;
-  transition: 0.3s;
 }
 
-nav a:hover {
+.nav a:hover {
   color: #38bdf8;
 }
 
@@ -47,7 +44,7 @@ nav a:hover {
 .container {
   width: 90%;
   max-width: 900px;
-  margin: 25px auto;
+  margin: 20px auto;
 }
 
 h1 {
@@ -55,37 +52,41 @@ h1 {
   font-size: 22px;
 }
 
-/* ===== CARD BERITA ===== */
+/* ===== GRID FIX ===== */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== CARD FIX ===== */
 .card {
   background: white;
   padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
 }
 
 .card h2 {
   font-size: 18px;
   margin-bottom: 8px;
-  color: #111827;
 }
 
 .card p {
   font-size: 14px;
-  color: #4b5563;
+  color: #555;
   margin-bottom: 10px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .card a {
-  text-decoration: none;
   color: #2563eb;
+  text-decoration: none;
   font-weight: bold;
 }
 
@@ -95,22 +96,14 @@ h1 {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
-  header {
+  .header {
     flex-direction: column;
-    text-align: center;
     gap: 10px;
+    text-align: center;
   }
 
-  nav {
-    justify-content: center;
+  .nav {
     flex-wrap: wrap;
-  }
-
-  h1 {
-    font-size: 18px;
-  }
-
-  .card h2 {
-    font-size: 16px;
+    justify-content: center;
   }
 }
