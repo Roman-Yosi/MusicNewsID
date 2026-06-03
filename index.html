@@ -130,8 +130,9 @@ footer{
 
 <script>
 const rssUrl = "https://romanyosi5.wordpress.com/feed/";
+const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rssUrl);
 
-fetch(rssUrl)
+fetch(proxy)
 .then(res => res.text())
 .then(str => {
 
@@ -142,7 +143,7 @@ fetch(rssUrl)
 
   let html = "";
 
-  if(items.length === 0){
+  if(!items || items.length === 0){
     document.getElementById("news-container").innerHTML =
     "<p>Tidak ada artikel di WordPress</p>";
     return;
@@ -170,7 +171,7 @@ fetch(rssUrl)
 })
 .catch(err => {
   document.getElementById("news-container").innerHTML =
-  "<p>Gagal memuat RSS WordPress (cek koneksi / RSS)</p>";
+  "<p>RSS gagal dimuat (proxy error)</p>";
 });
 </script>
 
