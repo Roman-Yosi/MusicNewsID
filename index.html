@@ -9,6 +9,7 @@
 
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo">MusicNewsID</div>
 
@@ -19,11 +20,18 @@
   </nav>
 </header>
 
+<!-- HERO / HALAMAN UTAMA -->
+<section class="hero">
+  <h1>Berita Musik Terbaru Indonesia</h1>
+  <p>Update artikel, trending musik, dan berita artis setiap hari</p>
+</section>
+
+<!-- ARTIKEL UTAMA -->
 <section class="container">
 
-  <h1>Berita Terbaru</h1>
+  <h2>🔥 Artikel Terbaru</h2>
 
-  <div id="news">Memuat artikel...</div>
+  <div id="news">Loading berita...</div>
 
 </section>
 
@@ -39,31 +47,40 @@ async function loadBlog() {
 
     let html = "";
 
-    if (!data.items || data.items.length === 0) {
-      document.getElementById("news").innerHTML = "Belum ada artikel.";
-      return;
-    }
-
-    data.items.forEach(post => {
+    data.items.forEach((post, index) => {
 
       let title = post.title;
       let desc = post.description.replace(/<[^>]*>/g,'');
       let link = post.link;
 
-      html += `
-        <div class="card">
-          <h2>${title}</h2>
-          <p>${desc.substring(0, 180)}...</p>
-          <a href="${link}" target="_blank">Baca Selengkapnya</a>
-        </div>
-      `;
+      // ARTIKEL PERTAMA (HEADLINE BESAR)
+      if (index === 0) {
+        html += `
+          <div class="featured">
+            <h2>${title}</h2>
+            <p>${desc.substring(0, 200)}...</p>
+            <a href="${link}" target="_blank">Baca Selengkapnya</a>
+          </div>
+        `;
+      }
+
+      // ARTIKEL LAIN
+      else {
+        html += `
+          <div class="card">
+            <h3>${title}</h3>
+            <p>${desc.substring(0, 120)}...</p>
+            <a href="${link}" target="_blank">Baca</a>
+          </div>
+        `;
+      }
     });
 
     document.getElementById("news").innerHTML = html;
 
   } catch (err) {
-    console.log(err);
     document.getElementById("news").innerHTML = "Gagal memuat artikel.";
+    console.log(err);
   }
 }
 
