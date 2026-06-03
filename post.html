@@ -1,134 +1,54 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MusicNewsID - Artikel</title>
-
-<style>
-body{
-  font-family:Arial,sans-serif;
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-  background:#fff;
-  color:#222;
-  line-height:1.7;
-}
-
-h1{
-  border-bottom:2px solid #ddd;
-  padding-bottom:10px;
-}
-
-h2{
-  border-bottom:1px solid #ddd;
-  margin-top:25px;
-  padding-bottom:5px;
-}
-
-/* INFBOX WIKIPEDIA STYLE */
-.infobox{
-  float:right;
-  width:280px;
-  border:1px solid #ccc;
-  background:#f8f9fa;
-  padding:10px;
-  margin:0 0 15px 15px;
-}
-
-.infobox img{
-  width:100%;
-  border-radius:6px;
-}
-
-.infobox table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-
-.infobox td{
-  border-bottom:1px solid #ddd;
-  padding:6px;
-}
-
-.clear{clear:both;}
-
-.loading{
-  color:gray;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="content" class="loading">Memuat artikel...</div>
+<header>
+  MusicNewsID
+</header>
+
+<section class="container" id="content">
+
+</section>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const url = params.get("url");
-
-if(!url){
-  document.getElementById("content").innerHTML = "URL tidak ditemukan";
-  throw new Error("no url");
-}
-
-/* ambil RSS Blogger page langsung */
-fetch(url)
-.then(res => res.text())
-.then(html => {
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-
-  /* ambil judul */
-  const title =
-    doc.querySelector("h3.post-title")?.innerText ||
-    doc.querySelector("title")?.innerText ||
-    "Artikel";
-
-  /* ambil isi artikel */
-  const content =
-    doc.querySelector(".post-body")?.innerHTML ||
-    doc.body.innerHTML;
-
-  /* 🔥 ambil gambar pertama dari konten */
-  let img = "";
-  const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
-  if(imgMatch){
-    img = imgMatch[1];
-  }else{
-    img = "https://via.placeholder.com/300x300?text=MusicNewsID";
+const data = {
+  1: {
+    title: "Roman Yosi Rilis Lagu Baru",
+    content: "Roman Yosi resmi merilis single terbaru dengan nuansa indie pop emosional."
+  },
+  2: {
+    title: "Tren Musik Indonesia 2026",
+    content: "Industri musik Indonesia berkembang pesat di era digital streaming."
+  },
+  3: {
+    title: "Behind The Scene Studio",
+    content: "Proses rekaman dilakukan dengan peralatan profesional di studio musik."
   }
+};
 
-  /* bersihkan teks kasar */
-  const cleanText = content.replace(/<script[^>]*>.*?<\/script>/gi,'')
-                           .replace(/style="[^"]*"/g,'')
-                           .replace(/<img[^>]*>/g,'');
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
+const post = data[id];
+
+if (post) {
   document.getElementById("content").innerHTML = `
-    <h1>${title}</h1>
-
-    <div class="infobox">
-      <img src="${img}">
-      <table>
-        <tr><td><b>Portal</b></td><td>MusicNewsID</td></tr>
-        <tr><td><b>Kategori</b></td><td>Artikel Musik</td></tr>
-      </table>
+    <div class="card">
+      <h2>${post.title}</h2>
+      <p>${post.content}</p>
     </div>
-
-    <div>
-      ${cleanText}
-    </div>
-
-    <div class="clear"></div>
   `;
-})
-.catch(err => {
+} else {
   document.getElementById("content").innerHTML =
-  "Gagal memuat artikel";
-});
+    "<div class='card'>Artikel tidak ditemukan</div>";
+}
 </script>
 
 </body>
