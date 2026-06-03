@@ -1,117 +1,29 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MusicNewsID</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0f0f0f;
-  color:#fff;
-}
-
-header{
-  background:#000;
-  padding:15px;
-  text-align:center;
-  font-size:22px;
-  font-weight:bold;
-  border-bottom:2px solid #111;
-}
-
-.container{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:15px;
-  padding:20px;
-}
-
-.card{
-  background:#1a1a1a;
-  border-radius:12px;
-  overflow:hidden;
-  border:1px solid #222;
-  transition:0.3s;
-  padding:12px;
-}
-
-.card:hover{
-  transform:scale(1.02);
-  border-color:#00d9ff;
-}
-
-.card h3{
-  color:#00d9ff;
-  font-size:15px;
-  margin-bottom:8px;
-}
-
-.card p{
-  font-size:13px;
-  color:#bbb;
-}
-
-a{
-  color:#00d9ff;
-  text-decoration:none;
-}
-</style>
-
+  <title>MusicNewsID</title>
 </head>
-
 <body>
 
-<header>MusicNewsID</header>
-
-<div class="container" id="news">Loading berita...</div>
+<h1>MusicNewsID</h1>
+<div id="news"></div>
 
 <script>
-
-// 🔥 WORDPRESS RSS (PALING STABIL)
-const rssURL = "https://romanyosi5.wordpress.com/feed/";
-
-fetch(rssURL)
-.then(res => res.text())
-.then(str => {
-
-  let parser = new DOMParser();
-  let xml = parser.parseFromString(str, "text/xml");
-
-  let items = xml.querySelectorAll("item");
-
-  let html = "";
-
-  items.forEach(item => {
-
-    let title = item.querySelector("title")?.textContent || "";
-    let link = item.querySelector("link")?.textContent || "";
-    let desc = item.querySelector("description")?.textContent || "";
-
-    // bersihkan HTML
-    desc = desc.replace(/<[^>]*>/g, "");
-
-    html += `
-      <div class="card">
-        <a href="${link}" target="_blank">
-          <h3>${title}</h3>
-        </a>
-        <p>${desc.slice(0,150)}...</p>
-      </div>
-    `;
+fetch("rss.json")
+  .then(res => res.json())
+  .then(data => {
+    let html = "";
+    data.forEach(item => {
+      html += `
+        <div style="margin-bottom:20px">
+          <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+          <small>${item.date}</small>
+          <p>${item.description}</p>
+        </div>
+      `;
+    });
+    document.getElementById("news").innerHTML = html;
   });
-
-  document.getElementById("news").innerHTML = html;
-
-})
-.catch(err => {
-  console.log(err);
-  document.getElementById("news").innerHTML =
-  "❌ Gagal memuat artikel WordPress";
-});
-
 </script>
 
 </body>
